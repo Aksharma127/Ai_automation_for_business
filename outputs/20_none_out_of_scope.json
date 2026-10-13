@@ -1,0 +1,40 @@
+{
+  "request": "Book me a flight to Paris next Tuesday.",
+  "run_id": "RUN-20261013204555-bb7e67",
+  "mode": "offline (deterministic rules and templates)",
+  "route": {
+    "workflow_id": null,
+    "confidence": 0.0,
+    "reasoning": "no workflow vocabulary found in the request",
+    "method": "keyword",
+    "candidates": [
+      {
+        "workflow_id": "WF001",
+        "name": "Inventory Restock Check",
+        "score": 0,
+        "matched": []
+      },
+      {
+        "workflow_id": "WF002",
+        "name": "Product Price Validation",
+        "score": 0,
+        "matched": []
+      },
+      {
+        "workflow_id": "WF003",
+        "name": "Vendor File Processing",
+        "score": 0,
+        "matched": []
+      }
+    ]
+  },
+  "workflow_id": null,
+  "workflow_name": null,
+  "inputs": null,
+  "trace": [],
+  "status": "no_workflow",
+  "message": "I couldn't confidently match your request to a workflow.\nI can help with:\n  - Inventory Restock Check: User asks which products need restocking\n  - Product Price Validation: User asks to validate product prices\n  - Vendor File Processing: User provides a vendor file for processing\n  - Product Description Generator: User asks to generate product content\n  - Customer Order Status: User asks for an order status\n  - Duplicate Product Detection: User asks to find duplicate products\n  - Marketing Campaign Brief: User asks to create a campaign brief\n  - SEO Keyword Classification: User uploads or provides a keyword list\n  - Employee Task Assignment: Manager asks the agent to assign a task\n  - Workflow Performance Report: User asks for a performance report",
+  "answer": "I couldn't confidently match your request to a workflow.\nI can help with:\n  - Inventory Restock Check: User asks which products need restocking\n  - Product Price Validation: User asks to validate product prices\n  - Vendor File Processing: User provides a vendor file for processing\n  - Product Description Generator: User asks to generate product content\n  - Customer Order Status: User asks for an order status\n  - Duplicate Product Detection: User asks to find duplicate products\n  - Marketing Campaign Brief: User asks to create a campaign brief\n  - SEO Keyword Classification: User uploads or provides a keyword list\n  - Employee Task Assignment: Manager asks the agent to assign a task\n  - Workflow Performance Report: User asks for a performance report",
+  "result": null,
+  "notes": []
+}

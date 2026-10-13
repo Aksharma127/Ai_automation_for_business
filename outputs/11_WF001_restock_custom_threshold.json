@@ -1,0 +1,188 @@
+{
+  "request": "Check today's inventory and identify products that need restocking, flag anything below 20 units.",
+  "run_id": "RUN-20261013204554-71613c",
+  "mode": "offline (deterministic rules and templates)",
+  "route": {
+    "workflow_id": "WF001",
+    "confidence": 0.908,
+    "reasoning": "matched terms ['check', 'inventory', 'identify', 'product', 'need', 'restock'] (evidence 27.3, runner-up 4.49)",
+    "method": "keyword",
+    "candidates": [
+      {
+        "workflow_id": "WF001",
+        "name": "Inventory Restock Check",
+        "score": 27.3,
+        "matched": [
+          "check",
+          "inventory",
+          "identify",
+          "product",
+          "need",
+          "restock"
+        ]
+      },
+      {
+        "workflow_id": "WF002",
+        "name": "Product Price Validation",
+        "score": 4.49,
+        "matched": [
+          "product",
+          "flag"
+        ]
+      },
+      {
+        "workflow_id": "WF004",
+        "name": "Product Description Generator",
+        "score": 3.3,
+        "matched": [
+          "product"
+        ]
+      }
+    ]
+  },
+  "workflow_id": "WF001",
+  "workflow_name": "Inventory Restock Check",
+  "inputs": {
+    "inventory_file": "data/sample/inventory.csv",
+    "threshold_override": 20,
+    "reorder_multiplier": 2,
+    "request": "Check today's inventory and identify products that need restocking, flag anything below 20 units."
+  },
+  "trace": [
+    {
+      "n": 1,
+      "step": "Load inventory",
+      "tool": "load_table",
+      "attempts": 1,
+      "status": "ok",
+      "output": "loaded 10 products",
+      "ms": 1.7
+    },
+    {
+      "n": 2,
+      "step": "compare current stock with minimum threshold",
+      "tool": "add_columns",
+      "attempts": 1,
+      "status": "ok",
+      "output": "compared stock with threshold for 10 products",
+      "ms": 0.3
+    },
+    {
+      "n": 3,
+      "step": "identify low-stock products",
+      "tool": "filter_rows",
+      "attempts": 1,
+      "status": "ok",
+      "output": "5 product(s) below threshold",
+      "ms": 0.1
+    },
+    {
+      "n": 4,
+      "step": "calculate reorder quantity",
+      "tool": "add_columns",
+      "attempts": 1,
+      "status": "ok",
+      "output": "calculated reorder quantity for 5 product(s)",
+      "ms": 0.3
+    },
+    {
+      "n": 5,
+      "step": "generate restock list",
+      "tool": "sort_rows",
+      "attempts": 1,
+      "status": "ok",
+      "output": "restock list with 5 product(s), lowest stock first",
+      "ms": 0.1
+    }
+  ],
+  "status": "completed",
+  "message": null,
+  "answer": "5 of 10 products are below their minimum stock threshold. Estimated reorder cost: $1931.15.",
+  "result": {
+    "title": "Products requiring restock",
+    "summary": "5 of 10 products are below their minimum stock threshold. Estimated reorder cost: $1931.15.",
+    "sections": [
+      {
+        "heading": "Restock list",
+        "table": [
+          {
+            "sku": "SKU-1005",
+            "product_name": "Wool Beanie Grey",
+            "category": "Accessories",
+            "current_stock": 0,
+            "minimum_stock": 15,
+            "unit_cost": 3.1,
+            "supplier": "KnitHouse",
+            "threshold": 20,
+            "needs_restock": true,
+            "suggested_reorder_qty": 40,
+            "estimated_cost": 124.0
+          },
+          {
+            "sku": "SKU-1007",
+            "product_name": "Running Shoes Black Size 9",
+            "category": "Footwear",
+            "current_stock": 5,
+            "minimum_stock": 20,
+            "unit_cost": 28,
+            "supplier": "StrideMax",
+            "threshold": 20,
+            "needs_restock": true,
+            "suggested_reorder_qty": 35,
+            "estimated_cost": 980
+          },
+          {
+            "sku": "SKU-1003",
+            "product_name": "Slim Fit Denim Jeans",
+            "category": "Apparel",
+            "current_stock": 8,
+            "minimum_stock": 25,
+            "unit_cost": 14.2,
+            "supplier": "DenimCo",
+            "threshold": 20,
+            "needs_restock": true,
+            "suggested_reorder_qty": 32,
+            "estimated_cost": 454.4
+          },
+          {
+            "sku": "SKU-1001",
+            "product_name": "Classic Cotton T-Shirt (White)",
+            "category": "Apparel",
+            "current_stock": 12,
+            "minimum_stock": 40,
+            "unit_cost": 4.5,
+            "supplier": "ThreadWorks",
+            "threshold": 20,
+            "needs_restock": true,
+            "suggested_reorder_qty": 28,
+            "estimated_cost": 126.0
+          },
+          {
+            "sku": "SKU-1009",
+            "product_name": "Hooded Sweatshirt Navy",
+            "category": "Apparel",
+            "current_stock": 19,
+            "minimum_stock": 20,
+            "unit_cost": 11.75,
+            "supplier": "ThreadWorks",
+            "threshold": 20,
+            "needs_restock": true,
+            "suggested_reorder_qty": 21,
+            "estimated_cost": 246.75
+          }
+        ],
+        "columns": [
+          "sku",
+          "product_name",
+          "current_stock",
+          "threshold",
+          "suggested_reorder_qty",
+          "estimated_cost",
+          "supplier"
+        ],
+        "empty": "Every product is at or above its minimum stock threshold."
+      }
+    ]
+  },
+  "notes": []
+}

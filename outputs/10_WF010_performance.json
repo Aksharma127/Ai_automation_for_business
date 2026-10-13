@@ -1,0 +1,353 @@
+{
+  "request": "Which workflows are failing most often?",
+  "run_id": "RUN-20261013204554-8a576d",
+  "mode": "offline (deterministic rules and templates)",
+  "route": {
+    "workflow_id": "WF010",
+    "confidence": 0.982,
+    "reasoning": "matched terms ['workflow', 'fail', 'most', 'often'] (evidence 23.98, runner-up 0)",
+    "method": "keyword",
+    "candidates": [
+      {
+        "workflow_id": "WF010",
+        "name": "Workflow Performance Report",
+        "score": 23.98,
+        "matched": [
+          "workflow",
+          "fail",
+          "most",
+          "often"
+        ]
+      },
+      {
+        "workflow_id": "WF001",
+        "name": "Inventory Restock Check",
+        "score": 0,
+        "matched": []
+      },
+      {
+        "workflow_id": "WF002",
+        "name": "Product Price Validation",
+        "score": 0,
+        "matched": []
+      }
+    ]
+  },
+  "workflow_id": "WF010",
+  "workflow_name": "Workflow Performance Report",
+  "inputs": {
+    "log_file": "data/sample/execution_logs.csv",
+    "max_failure_rate": 0.1,
+    "max_avg_duration_sec": 30,
+    "request": "Which workflows are failing most often?"
+  },
+  "trace": [
+    {
+      "n": 1,
+      "step": "Load execution logs",
+      "tool": "load_table",
+      "attempts": 1,
+      "status": "ok",
+      "output": "loaded 1972 step log rows",
+      "ms": 17.3
+    },
+    {
+      "n": 2,
+      "step": "calculate success/failure rate",
+      "tool": "run_outcomes",
+      "attempts": 1,
+      "status": "ok",
+      "output": "success/failure rates for 7 workflows",
+      "ms": 1.1
+    },
+    {
+      "n": 3,
+      "step": "calculate average execution time",
+      "tool": "run_durations",
+      "attempts": 1,
+      "status": "ok",
+      "output": "7 record(s)",
+      "ms": 1.3
+    },
+    {
+      "n": 4,
+      "step": "identify frequent errors",
+      "tool": "frequent_errors",
+      "attempts": 1,
+      "status": "ok",
+      "output": "top 6 error patterns",
+      "ms": 0.2
+    },
+    {
+      "n": 5,
+      "step": "identify slow steps",
+      "tool": "slow_steps",
+      "attempts": 1,
+      "status": "ok",
+      "output": "5 slowest steps",
+      "ms": 1.8
+    },
+    {
+      "n": 6,
+      "step": "generate recommendations",
+      "tool": "performance_recommendations",
+      "attempts": 1,
+      "status": "ok",
+      "output": "5 workflow(s) flagged, 9 recommendation(s)",
+      "ms": 0.3
+    }
+  ],
+  "status": "completed",
+  "message": null,
+  "answer": "Analysed 373 runs of 7 workflows. 5 workflow(s) breach the thresholds (failure rate above 10% or average run time above 30s).",
+  "result": {
+    "title": "Workflow performance report",
+    "summary": "Analysed 373 runs of 7 workflows. 5 workflow(s) breach the thresholds (failure rate above 10% or average run time above 30s).",
+    "sections": [
+      {
+        "heading": "Flagged workflows",
+        "table": [
+          {
+            "workflow_id": "WF003",
+            "workflow_name": "Vendor File Processing",
+            "runs": 58,
+            "failed_runs": 9,
+            "success_rate": 0.845,
+            "failure_rate": 0.155,
+            "avg_duration_sec": 30.83,
+            "max_duration_sec": 38.1,
+            "flag_reasons": "failure rate 15.5% > 10%; avg time 30.83s > 30s"
+          },
+          {
+            "workflow_id": "WF005",
+            "workflow_name": "Customer Order Status",
+            "runs": 52,
+            "failed_runs": 8,
+            "success_rate": 0.846,
+            "failure_rate": 0.154,
+            "avg_duration_sec": 9.1,
+            "max_duration_sec": 10.6,
+            "flag_reasons": "failure rate 15.4% > 10%"
+          },
+          {
+            "workflow_id": "WF008",
+            "workflow_name": "SEO Keyword Classification",
+            "runs": 53,
+            "failed_runs": 5,
+            "success_rate": 0.906,
+            "failure_rate": 0.094,
+            "avg_duration_sec": 38.22,
+            "max_duration_sec": 45.14,
+            "flag_reasons": "avg time 38.22s > 30s"
+          },
+          {
+            "workflow_id": "WF006",
+            "workflow_name": "Duplicate Product Detection",
+            "runs": 48,
+            "failed_runs": 3,
+            "success_rate": 0.938,
+            "failure_rate": 0.062,
+            "avg_duration_sec": 58.09,
+            "max_duration_sec": 72.39,
+            "flag_reasons": "avg time 58.09s > 30s"
+          },
+          {
+            "workflow_id": "WF004",
+            "workflow_name": "Product Description Generator",
+            "runs": 55,
+            "failed_runs": 1,
+            "success_rate": 0.982,
+            "failure_rate": 0.018,
+            "avg_duration_sec": 57.34,
+            "max_duration_sec": 76.74,
+            "flag_reasons": "avg time 57.34s > 30s"
+          }
+        ],
+        "columns": [
+          "workflow_id",
+          "workflow_name",
+          "runs",
+          "failure_rate",
+          "avg_duration_sec",
+          "flag_reasons"
+        ],
+        "empty": "No workflow breaches the thresholds."
+      },
+      {
+        "heading": "All workflows (most failures first)",
+        "table": [
+          {
+            "workflow_id": "WF003",
+            "workflow_name": "Vendor File Processing",
+            "runs": 58,
+            "failed_runs": 9,
+            "success_rate": 0.845,
+            "failure_rate": 0.155,
+            "avg_duration_sec": 30.83,
+            "max_duration_sec": 38.1
+          },
+          {
+            "workflow_id": "WF005",
+            "workflow_name": "Customer Order Status",
+            "runs": 52,
+            "failed_runs": 8,
+            "success_rate": 0.846,
+            "failure_rate": 0.154,
+            "avg_duration_sec": 9.1,
+            "max_duration_sec": 10.6
+          },
+          {
+            "workflow_id": "WF008",
+            "workflow_name": "SEO Keyword Classification",
+            "runs": 53,
+            "failed_runs": 5,
+            "success_rate": 0.906,
+            "failure_rate": 0.094,
+            "avg_duration_sec": 38.22,
+            "max_duration_sec": 45.14
+          },
+          {
+            "workflow_id": "WF006",
+            "workflow_name": "Duplicate Product Detection",
+            "runs": 48,
+            "failed_runs": 3,
+            "success_rate": 0.938,
+            "failure_rate": 0.062,
+            "avg_duration_sec": 58.09,
+            "max_duration_sec": 72.39
+          },
+          {
+            "workflow_id": "WF002",
+            "workflow_name": "Product Price Validation",
+            "runs": 52,
+            "failed_runs": 2,
+            "success_rate": 0.962,
+            "failure_rate": 0.038,
+            "avg_duration_sec": 6.08,
+            "max_duration_sec": 7.71
+          },
+          {
+            "workflow_id": "WF004",
+            "workflow_name": "Product Description Generator",
+            "runs": 55,
+            "failed_runs": 1,
+            "success_rate": 0.982,
+            "failure_rate": 0.018,
+            "avg_duration_sec": 57.34,
+            "max_duration_sec": 76.74
+          },
+          {
+            "workflow_id": "WF001",
+            "workflow_name": "Inventory Restock Check",
+            "runs": 55,
+            "failed_runs": 1,
+            "success_rate": 0.982,
+            "failure_rate": 0.018,
+            "avg_duration_sec": 4.05,
+            "max_duration_sec": 5.0
+          }
+        ],
+        "columns": [
+          "workflow_id",
+          "workflow_name",
+          "runs",
+          "failed_runs",
+          "success_rate",
+          "failure_rate",
+          "avg_duration_sec"
+        ]
+      },
+      {
+        "heading": "Most frequent errors",
+        "table": [
+          {
+            "workflow_id": "WF005",
+            "step": "Retrieve shipment",
+            "error": "TimeoutError: shipment API did not respond in 10s",
+            "occurrences": 6
+          },
+          {
+            "workflow_id": "WF005",
+            "step": "Retrieve shipment",
+            "error": "NotFound: order id not found",
+            "occurrences": 2
+          },
+          {
+            "workflow_id": "WF008",
+            "step": "Classify intent",
+            "error": "RuntimeError: unexpected failure",
+            "occurrences": 2
+          },
+          {
+            "workflow_id": "WF008",
+            "step": "Export",
+            "error": "RuntimeError: unexpected failure",
+            "occurrences": 2
+          },
+          {
+            "workflow_id": "WF001",
+            "step": "Compare stock",
+            "error": "RuntimeError: unexpected failure",
+            "occurrences": 1
+          },
+          {
+            "workflow_id": "WF003",
+            "step": "Validate fields",
+            "error": "ParseError: unsupported encoding",
+            "occurrences": 1
+          }
+        ]
+      },
+      {
+        "heading": "Slowest steps",
+        "table": [
+          {
+            "workflow_id": "WF004",
+            "step": "Create description",
+            "avg_sec": 26.63,
+            "samples": 55
+          },
+          {
+            "workflow_id": "WF006",
+            "step": "Compare attributes",
+            "avg_sec": 23.97,
+            "samples": 47
+          },
+          {
+            "workflow_id": "WF008",
+            "step": "Classify intent",
+            "avg_sec": 15.51,
+            "samples": 52
+          },
+          {
+            "workflow_id": "WF003",
+            "step": "Validate fields",
+            "avg_sec": 12.39,
+            "samples": 53
+          },
+          {
+            "workflow_id": "WF004",
+            "step": "Meta description",
+            "avg_sec": 8.1,
+            "samples": 54
+          }
+        ]
+      },
+      {
+        "heading": "Recommendations",
+        "items": [
+          "WF003 Vendor File Processing: 'ParseError: unsupported encoding' at step 'Validate fields' (1x) - detect encoding/format before parsing and support the failing format explicitly.",
+          "WF003 Vendor File Processing: step 'Validate fields' averages 12.39s - parallelise or cache this step, or move it to a background job.",
+          "WF004 Product Description Generator: step 'Create description' averages 26.63s - parallelise or cache this step, or move it to a background job.",
+          "WF005 Customer Order Status: 'TimeoutError: shipment API did not respond in 10s' at step 'Retrieve shipment' (6x) - add retries with exponential backoff and a circuit breaker around the external API; cache recent responses.",
+          "WF005 Customer Order Status: 'NotFound: order id not found' at step 'Retrieve shipment' (2x) - treat 'not found' as a user-facing outcome (ask for another identifier) rather than a failure.",
+          "WF006 Duplicate Product Detection: step 'Compare attributes' averages 23.97s - parallelise or cache this step, or move it to a background job.",
+          "WF008 SEO Keyword Classification: 'RuntimeError: unexpected failure' at step 'Classify intent' (2x) - investigate the root cause and add a regression test.",
+          "WF008 SEO Keyword Classification: 'RuntimeError: unexpected failure' at step 'Export' (2x) - investigate the root cause and add a regression test.",
+          "WF008 SEO Keyword Classification: step 'Classify intent' averages 15.51s - parallelise or cache this step, or move it to a background job."
+        ]
+      }
+    ]
+  },
+  "notes": []
+}

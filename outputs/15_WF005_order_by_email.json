@@ -1,0 +1,135 @@
+{
+  "request": "What's the status of my orders? My email is jane.doe@example.com",
+  "run_id": "RUN-20261013204554-914524",
+  "mode": "offline (deterministic rules and templates)",
+  "route": {
+    "workflow_id": "WF005",
+    "confidence": 0.909,
+    "reasoning": "matched terms ['statu', 'order'] (evidence 14.39, runner-up 0)",
+    "method": "keyword",
+    "candidates": [
+      {
+        "workflow_id": "WF005",
+        "name": "Customer Order Status",
+        "score": 14.39,
+        "matched": [
+          "statu",
+          "order"
+        ]
+      },
+      {
+        "workflow_id": "WF001",
+        "name": "Inventory Restock Check",
+        "score": 0,
+        "matched": []
+      },
+      {
+        "workflow_id": "WF002",
+        "name": "Product Price Validation",
+        "score": 0,
+        "matched": []
+      }
+    ]
+  },
+  "workflow_id": "WF005",
+  "workflow_name": "Customer Order Status",
+  "inputs": {
+    "order_id": null,
+    "email": "jane.doe@example.com",
+    "orders_db": "data/sample/orders.json",
+    "shipments_api": "data/sample/shipments.json",
+    "request": "What's the status of my orders? My email is jane.doe@example.com"
+  },
+  "trace": [
+    {
+      "n": 1,
+      "step": "Validate identifier",
+      "tool": "validate_identifier",
+      "attempts": 1,
+      "status": "ok",
+      "output": "customer_email = jane.doe@example.com",
+      "ms": 0.1
+    },
+    {
+      "n": 2,
+      "step": "search order data",
+      "tool": "find_records",
+      "attempts": 1,
+      "status": "ok",
+      "output": "found 2 order(s)",
+      "ms": 0.2
+    },
+    {
+      "n": 3,
+      "step": "retrieve order status",
+      "tool": "pick_fields",
+      "attempts": 1,
+      "status": "ok",
+      "output": "2 record(s)",
+      "ms": 0.0
+    },
+    {
+      "n": 4,
+      "step": "retrieve shipment information",
+      "tool": "shipment_lookup",
+      "attempts": 2,
+      "retries": [
+        "UPS tracking API timed out"
+      ],
+      "status": "ok",
+      "output": "tracking fetched for 2 order(s)",
+      "ms": 50.7
+    },
+    {
+      "n": 5,
+      "step": "summarize current status",
+      "tool": "summarize_orders",
+      "attempts": 1,
+      "status": "ok",
+      "output": "2 record(s)",
+      "ms": 0.1
+    }
+  ],
+  "status": "completed",
+  "message": null,
+  "answer": "Found 2 order(s) for jane.doe@example.com.",
+  "result": {
+    "title": "Order status for jane.doe@example.com",
+    "summary": "Found 2 order(s) for jane.doe@example.com.",
+    "sections": [
+      {
+        "heading": "Orders",
+        "table": [
+          {
+            "order_id": "ORD-1001",
+            "order_date": "2026-10-08",
+            "order_status": "shipped",
+            "items": "1x Running Shoes Blue Size 10, 2x Sports Water Bottle 750ml",
+            "carrier": "UPS",
+            "tracking_number": "1Z999AA10123456784",
+            "shipment": "in transit, last seen Louisville, KY hub (2026-10-13T06:42:00Z), ETA 2026-10-15"
+          },
+          {
+            "order_id": "ORD-1003",
+            "order_date": "2026-09-28",
+            "order_status": "delivered",
+            "items": "3x Classic Cotton T-Shirt (White)",
+            "carrier": "USPS",
+            "tracking_number": "9400100000000000000001",
+            "shipment": "delivered, last seen Front door, Austin TX (2026-10-02T14:10:00Z)"
+          }
+        ],
+        "columns": [
+          "order_id",
+          "order_date",
+          "order_status",
+          "items",
+          "carrier",
+          "tracking_number",
+          "shipment"
+        ]
+      }
+    ]
+  },
+  "notes": []
+}

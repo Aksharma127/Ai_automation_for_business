@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "workflow-agent"
+version = "1.0.0"
+description = "Excel-driven, reusable AI agent that turns business workflows into executable LangGraph runs"
+requires-python = ">=3.10"
+readme = "README.md"
+dependencies = [
+  "langgraph>=1.0", "langchain>=1.0", "langchain-core>=1.0", "pydantic>=2.7", "pandas>=2.2",
+  "openpyxl>=3.1", "pyyaml>=6.0", "python-dotenv>=1.0",
+]
+
+[project.optional-dependencies]
+openai = ["langchain-openai>=1.0"]
+anthropic = ["langchain-anthropic>=1.0"]
+dev = ["pytest>=8.0"]
+
+[project.scripts]
+workflow-agent = "workflow_agent.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]

@@ -1,0 +1,11 @@
+sku,product_name,category,current_stock,minimum_stock,unit_cost,supplier
+SKU-1001,Classic Cotton T-Shirt (White),Apparel,12,40,4.50,ThreadWorks
+SKU-1002,Classic Cotton T-Shirt (Black),Apparel,85,40,4.50,ThreadWorks
+SKU-1003,Slim Fit Denim Jeans,Apparel,8,25,14.20,DenimCo
+SKU-1004,Leather Belt Brown,Accessories,30,20,6.80,LeatherLine
+SKU-1005,Wool Beanie Grey,Accessories,0,15,3.10,KnitHouse
+SKU-1006,Running Shoes Blue Size 10,Footwear,22,20,28.00,StrideMax
+SKU-1007,Running Shoes Black Size 9,Footwear,5,20,28.00,StrideMax
+SKU-1008,Canvas Tote Bag,Accessories,60,30,2.90,BagWorks
+SKU-1009,Hooded Sweatshirt Navy,Apparel,19,20,11.75,ThreadWorks
+SKU-1010,Sports Water Bottle 750ml,Accessories,150,50,1.80,HydroGoods

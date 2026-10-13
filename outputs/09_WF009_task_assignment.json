@@ -1,0 +1,244 @@
+{
+  "request": "Assign this urgent task to the best available developer.",
+  "run_id": "RUN-20261013204554-c86e50",
+  "mode": "offline (deterministic rules and templates)",
+  "route": {
+    "workflow_id": "WF009",
+    "confidence": 0.974,
+    "reasoning": "matched terms ['assign', 'urgent', 'task', 'best', 'available', 'developer'] (evidence 37.13, runner-up 1.79)",
+    "method": "keyword",
+    "candidates": [
+      {
+        "workflow_id": "WF009",
+        "name": "Employee Task Assignment",
+        "score": 37.13,
+        "matched": [
+          "assign",
+          "urgent",
+          "task",
+          "best",
+          "available",
+          "developer"
+        ]
+      },
+      {
+        "workflow_id": "WF005",
+        "name": "Customer Order Status",
+        "score": 1.79,
+        "matched": [
+          "available"
+        ]
+      },
+      {
+        "workflow_id": "WF006",
+        "name": "Duplicate Product Detection",
+        "score": 0.9,
+        "matched": [
+          "assign"
+        ]
+      }
+    ]
+  },
+  "workflow_id": "WF009",
+  "workflow_name": "Employee Task Assignment",
+  "inputs": {
+    "description": null,
+    "priority": "urgent",
+    "role": "developer",
+    "deadline": null,
+    "estimated_hours": null,
+    "task_file": "data/sample/pending_task.json",
+    "employees_file": "data/sample/employees.csv",
+    "request": "Assign this urgent task to the best available developer."
+  },
+  "trace": [
+    {
+      "n": 1,
+      "step": "Understand task requirements",
+      "tool": "understand_task",
+      "attempts": 1,
+      "status": "ok",
+      "output": "needs api, postgres, python; priority urgent; 8h; due 2026-10-14",
+      "ms": 2.3
+    },
+    {
+      "n": 2,
+      "step": "compare employee skills",
+      "tool": "score_skill_match",
+      "attempts": 1,
+      "status": "ok",
+      "output": "compared skills of 5 candidate(s)",
+      "ms": 1.6
+    },
+    {
+      "n": 3,
+      "step": "check current workload",
+      "tool": "check_workload",
+      "attempts": 1,
+      "status": "ok",
+      "output": "5 record(s)",
+      "ms": 0.1
+    },
+    {
+      "n": 4,
+      "step": "rank candidates",
+      "tool": "rank_rows",
+      "attempts": 1,
+      "status": "ok",
+      "output": "ranked 4 available candidate(s)",
+      "ms": 0.2
+    },
+    {
+      "n": 5,
+      "step": "select employee",
+      "tool": "select_best",
+      "attempts": 1,
+      "status": "ok",
+      "output": "selected Priya Nair (Backend Developer)",
+      "ms": 0.2
+    },
+    {
+      "n": 6,
+      "step": "generate assignment summary",
+      "tool": "generate_content",
+      "attempts": 1,
+      "status": "ok",
+      "output": "Assign 'Fix checkout API timeouts' to Priya Nair (Backend Developer). They have the req...",
+      "ms": 0.1
+    }
+  ],
+  "status": "completed",
+  "message": null,
+  "answer": "Assign 'Fix checkout API timeouts' to Priya Nair (Backend Developer). They have the required skills (api, postgres, python) and 10h of spare capacity this week, enough for the estimated 8h. Priority: urgent; deadline: 2026-10-14.",
+  "result": {
+    "title": "Recommended assignee: Priya Nair",
+    "summary": "Assign 'Fix checkout API timeouts' to Priya Nair (Backend Developer). They have the required skills (api, postgres, python) and 10h of spare capacity this week, enough for the estimated 8h. Priority: urgent; deadline: 2026-10-14.",
+    "sections": [
+      {
+        "heading": "Assignment",
+        "fields": {
+          "Task": "Fix checkout API timeouts",
+          "Recommended employee": "Priya Nair",
+          "Role": "Backend Developer",
+          "Priority": "urgent",
+          "Deadline": "2026-10-14",
+          "Required skills": [
+            "api",
+            "postgres",
+            "python"
+          ],
+          "Reasoning": "Assign 'Fix checkout API timeouts' to Priya Nair (Backend Developer). They have the required skills (api, postgres, python) and 10h of spare capacity this week, enough for the estimated 8h. Priority: urgent; deadline: 2026-10-14."
+        }
+      },
+      {
+        "heading": "Runner-up candidates",
+        "table": [
+          {
+            "employee_id": "E03",
+            "name": "Aisha Khan",
+            "role": "Full Stack Developer",
+            "skills": "python;react;api;docker",
+            "current_load_hours": 22,
+            "weekly_capacity_hours": 40,
+            "available": "yes",
+            "matched_skills": "api, python",
+            "skill_match": 0.67,
+            "spare_hours": 18,
+            "is_available": true,
+            "has_capacity": true,
+            "score": 0.604,
+            "rank": 2
+          }
+        ],
+        "columns": [
+          "name",
+          "role",
+          "matched_skills",
+          "spare_hours",
+          "score"
+        ],
+        "empty": "No other eligible candidates."
+      },
+      {
+        "heading": "Full ranking",
+        "table": [
+          {
+            "employee_id": "E01",
+            "name": "Priya Nair",
+            "role": "Backend Developer",
+            "skills": "python;api;postgres;aws",
+            "current_load_hours": 30,
+            "weekly_capacity_hours": 40,
+            "available": "yes",
+            "matched_skills": "api, postgres, python",
+            "skill_match": 1.0,
+            "spare_hours": 10,
+            "is_available": true,
+            "has_capacity": true,
+            "score": 0.775,
+            "rank": 1
+          },
+          {
+            "employee_id": "E03",
+            "name": "Aisha Khan",
+            "role": "Full Stack Developer",
+            "skills": "python;react;api;docker",
+            "current_load_hours": 22,
+            "weekly_capacity_hours": 40,
+            "available": "yes",
+            "matched_skills": "api, python",
+            "skill_match": 0.67,
+            "spare_hours": 18,
+            "is_available": true,
+            "has_capacity": true,
+            "score": 0.604,
+            "rank": 2
+          },
+          {
+            "employee_id": "E04",
+            "name": "Liam Chen",
+            "role": "Backend Developer",
+            "skills": "java;spring;postgres;kafka",
+            "current_load_hours": 12,
+            "weekly_capacity_hours": 40,
+            "available": "yes",
+            "matched_skills": "postgres",
+            "skill_match": 0.33,
+            "spare_hours": 28,
+            "is_available": true,
+            "has_capacity": true,
+            "score": 0.441,
+            "rank": 3
+          },
+          {
+            "employee_id": "E02",
+            "name": "Marco Rossi",
+            "role": "Frontend Developer",
+            "skills": "react;typescript;css;accessibility",
+            "current_load_hours": 38,
+            "weekly_capacity_hours": 40,
+            "available": "yes",
+            "matched_skills": "-",
+            "skill_match": 0.0,
+            "spare_hours": 2,
+            "is_available": true,
+            "has_capacity": false,
+            "score": 0.015,
+            "rank": 4
+          }
+        ],
+        "columns": [
+          "rank",
+          "name",
+          "role",
+          "matched_skills",
+          "skill_match",
+          "spare_hours",
+          "has_capacity",
+          "score"
+        ]
+      }
+    ]
+  },
+  "notes": []
+}

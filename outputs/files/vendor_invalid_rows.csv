@@ -1,0 +1,3 @@
+source_row,sku,product_name,cost,quantity,errors
+4,,Cable Knit Gloves,11,80,missing sku
+5,V-504,,7.5,45,missing product_name

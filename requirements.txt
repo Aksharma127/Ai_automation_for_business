@@ -1,0 +1,11 @@
+langgraph>=1.0
+langchain>=1.0
+langchain-core>=1.0
+langchain-openai>=1.0      # only needed for LLM_PROVIDER=openai
+langchain-anthropic>=1.0   # only needed for LLM_PROVIDER=anthropic
+pydantic>=2.7
+pandas>=2.2
+openpyxl>=3.1
+pyyaml>=6.0
+python-dotenv>=1.0
+pytest>=8.0

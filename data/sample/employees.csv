@@ -1,0 +1,9 @@
+employee_id,name,role,skills,current_load_hours,weekly_capacity_hours,available
+E01,Priya Nair,Backend Developer,python;api;postgres;aws,30,40,yes
+E02,Marco Rossi,Frontend Developer,react;typescript;css;accessibility,38,40,yes
+E03,Aisha Khan,Full Stack Developer,python;react;api;docker,22,40,yes
+E04,Liam Chen,Backend Developer,java;spring;postgres;kafka,12,40,yes
+E05,Sofia Garcia,QA Engineer,testing;selenium;api;python,20,40,yes
+E06,Daniel Okafor,DevOps Engineer,aws;docker;kubernetes;terraform,40,40,yes
+E07,Emma Wilson,Backend Developer,python;api;postgres;redis,10,40,no
+E08,Ravi Patel,Data Analyst,sql;python;tableau,15,40,yes

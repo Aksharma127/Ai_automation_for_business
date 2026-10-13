@@ -1,0 +1,140 @@
+{
+  "request": "Generate SEO content for this product.",
+  "run_id": "RUN-20261013204554-18a87f",
+  "mode": "offline (deterministic rules and templates)",
+  "route": {
+    "workflow_id": "WF004",
+    "confidence": 0.814,
+    "reasoning": "matched terms ['generate', 'seo', 'content', 'product'] (evidence 18.37, runner-up 5.38)",
+    "method": "keyword",
+    "candidates": [
+      {
+        "workflow_id": "WF004",
+        "name": "Product Description Generator",
+        "score": 18.37,
+        "matched": [
+          "generate",
+          "seo",
+          "content",
+          "product"
+        ]
+      },
+      {
+        "workflow_id": "WF008",
+        "name": "SEO Keyword Classification",
+        "score": 5.38,
+        "matched": [
+          "seo"
+        ]
+      },
+      {
+        "workflow_id": "WF002",
+        "name": "Product Price Validation",
+        "score": 3.3,
+        "matched": [
+          "product"
+        ]
+      }
+    ]
+  },
+  "workflow_id": "WF004",
+  "workflow_name": "Product Description Generator",
+  "inputs": {
+    "product_file": "data/sample/product_input.json",
+    "product_name": null,
+    "category": null,
+    "material": null,
+    "color": null,
+    "target_audience": null,
+    "attributes": null,
+    "request": "Generate SEO content for this product."
+  },
+  "trace": [
+    {
+      "n": 1,
+      "step": "Validate required attributes",
+      "tool": "collect_fields",
+      "attempts": 1,
+      "status": "ok",
+      "output": "product_name, category, attributes, color, target_audience attributes present, material missing",
+      "ms": 0.3
+    },
+    {
+      "n": 2,
+      "step": "create product description",
+      "tool": "generate_content",
+      "attempts": 1,
+      "status": "ok",
+      "output": "Meet the Quilted Puffer Jacket, part of our Outerwear range, designed for urban commute...",
+      "ms": 0.1
+    },
+    {
+      "n": 3,
+      "step": "generate short description",
+      "tool": "generate_content",
+      "attempts": 1,
+      "status": "ok",
+      "output": "Quilted Puffer Jacket in olive with water-resistant shell, zip-off hood and two zip poc...",
+      "ms": 0.1
+    },
+    {
+      "n": 4,
+      "step": "generate SEO title",
+      "tool": "generate_content",
+      "attempts": 1,
+      "status": "ok",
+      "output": "Quilted Puffer Jacket – Olive | Outerwear",
+      "ms": 0.1
+    },
+    {
+      "n": 5,
+      "step": "generate meta description",
+      "tool": "generate_content",
+      "attempts": 1,
+      "status": "ok",
+      "output": "Shop the Quilted Puffer Jacket in olive for urban commuters: water-resistant shell, zip...",
+      "ms": 0.1
+    }
+  ],
+  "status": "completed",
+  "message": null,
+  "answer": "Generated a description, short description, SEO title and meta description from the supplied attributes only. Missing information (not invented, please supply before publishing): material.",
+  "result": {
+    "title": "SEO content: Quilted Puffer Jacket",
+    "summary": "Generated a description, short description, SEO title and meta description from the supplied attributes only. Missing information (not invented, please supply before publishing): material.",
+    "sections": [
+      {
+        "heading": "Content",
+        "fields": {
+          "Product description": "Meet the Quilted Puffer Jacket, part of our Outerwear range, designed for urban commuters. Available in olive. Highlights: water-resistant shell, zip-off hood and two zip pockets.",
+          "Short description": "Quilted Puffer Jacket in olive with water-resistant shell, zip-off hood and two zip pockets.",
+          "SEO title": "Quilted Puffer Jacket – Olive | Outerwear",
+          "Meta description": "Shop the Quilted Puffer Jacket in olive for urban commuters: water-resistant shell, zip-off hood and two zip pockets. Explore our outerwear range."
+        }
+      },
+      {
+        "heading": "Missing information (explicitly not invented)",
+        "items": [
+          "material"
+        ],
+        "empty": "None, all attributes were supplied."
+      },
+      {
+        "heading": "Source attributes",
+        "fields": {
+          "product_name": "Quilted Puffer Jacket",
+          "category": "Outerwear",
+          "attributes": [
+            "water-resistant shell",
+            "zip-off hood",
+            "two zip pockets"
+          ],
+          "material": null,
+          "color": "Olive",
+          "target_audience": "Urban commuters"
+        }
+      }
+    ]
+  },
+  "notes": []
+}

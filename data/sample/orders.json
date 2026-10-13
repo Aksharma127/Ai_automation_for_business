@@ -1,0 +1,11 @@
+[
+  {"order_id": "ORD-1001", "customer_email": "jane.doe@example.com", "status": "shipped", "order_date": "2026-10-08",
+   "items": [{"sku": "SKU-1006", "name": "Running Shoes Blue Size 10", "qty": 1}, {"sku": "SKU-1010", "name": "Sports Water Bottle 750ml", "qty": 2}],
+   "tracking_number": "1Z999AA10123456784", "carrier": "UPS"},
+  {"order_id": "ORD-1002", "customer_email": "sam.lee@example.com", "status": "processing", "order_date": "2026-10-12",
+   "items": [{"sku": "SKU-1011", "name": "Quilted Puffer Jacket Olive", "qty": 1}], "tracking_number": null, "carrier": null},
+  {"order_id": "ORD-1003", "customer_email": "jane.doe@example.com", "status": "delivered", "order_date": "2026-09-28",
+   "items": [{"sku": "SKU-1001", "name": "Classic Cotton T-Shirt (White)", "qty": 3}], "tracking_number": "9400100000000000000001", "carrier": "USPS"},
+  {"order_id": "ORD-1004", "customer_email": "omar.h@example.com", "status": "shipped", "order_date": "2026-10-10",
+   "items": [{"sku": "SKU-1004", "name": "Leather Belt Brown", "qty": 1}], "tracking_number": "DHL-OUTAGE-0001", "carrier": "DHL"}
+]

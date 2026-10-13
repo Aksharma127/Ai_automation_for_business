@@ -1,0 +1,6 @@
+{
+  "1Z999AA10123456784": {"carrier": "UPS", "status": "in_transit", "last_location": "Louisville, KY hub", "last_update": "2026-10-13T06:42:00Z", "estimated_delivery": "2026-10-15",
+                         "simulate": "flaky_once"},
+  "9400100000000000000001": {"carrier": "USPS", "status": "delivered", "last_location": "Front door, Austin TX", "last_update": "2026-10-02T14:10:00Z", "estimated_delivery": "2026-10-02"},
+  "DHL-OUTAGE-0001": {"carrier": "DHL", "status": "unknown", "simulate": "down"}
+}

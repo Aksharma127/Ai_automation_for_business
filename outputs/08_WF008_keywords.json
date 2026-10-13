@@ -1,0 +1,277 @@
+{
+  "request": "Classify these keywords and map them to pages.",
+  "run_id": "RUN-20261013204554-ed276b",
+  "mode": "offline (deterministic rules and templates)",
+  "route": {
+    "workflow_id": "WF008",
+    "confidence": 0.994,
+    "reasoning": "matched terms ['classify', 'keyword', 'map', 'them', 'pag'] (evidence 31.17, runner-up 0)",
+    "method": "keyword",
+    "candidates": [
+      {
+        "workflow_id": "WF008",
+        "name": "SEO Keyword Classification",
+        "score": 31.17,
+        "matched": [
+          "classify",
+          "keyword",
+          "map",
+          "them",
+          "pag"
+        ]
+      },
+      {
+        "workflow_id": "WF001",
+        "name": "Inventory Restock Check",
+        "score": 0,
+        "matched": []
+      },
+      {
+        "workflow_id": "WF002",
+        "name": "Product Price Validation",
+        "score": 0,
+        "matched": []
+      }
+    ]
+  },
+  "workflow_id": "WF008",
+  "workflow_name": "SEO Keyword Classification",
+  "inputs": {
+    "keyword_file": "data/sample/keywords.csv",
+    "request": "Classify these keywords and map them to pages."
+  },
+  "trace": [
+    {
+      "n": 1,
+      "step": "Read keywords",
+      "tool": "load_table",
+      "attempts": 1,
+      "status": "ok",
+      "output": "read 15 keywords",
+      "ms": 1.4
+    },
+    {
+      "n": 2,
+      "step": "remove duplicates",
+      "tool": "dedupe_rows",
+      "attempts": 1,
+      "status": "ok",
+      "output": "14 unique, Buy Running Shoes Online duplicate(s) removed",
+      "ms": 0.1
+    },
+    {
+      "n": 3,
+      "step": "classify search intent",
+      "tool": "classify_intent",
+      "attempts": 1,
+      "status": "ok",
+      "output": "14 record(s)",
+      "ms": 1.6
+    },
+    {
+      "n": 4,
+      "step": "map keywords to categories",
+      "tool": "map_categories",
+      "attempts": 1,
+      "status": "ok",
+      "output": "14 record(s)",
+      "ms": 0.3
+    },
+    {
+      "n": 5,
+      "step": "identify high-priority keywords",
+      "tool": "rank_rows",
+      "attempts": 1,
+      "status": "ok",
+      "output": "scored and ranked 14 keywords",
+      "ms": 0.7
+    },
+    {
+      "n": 6,
+      "step": "export results",
+      "tool": "export_table",
+      "attempts": 1,
+      "status": "ok",
+      "output": "outputs/files/keyword_report.csv",
+      "ms": 0.4
+    }
+  ],
+  "status": "completed",
+  "message": null,
+  "answer": "14 unique keywords classified (1 duplicate(s) removed); 4 are high priority. Full report: outputs/files/keyword_report.csv.",
+  "result": {
+    "title": "SEO keyword report",
+    "summary": "14 unique keywords classified (1 duplicate(s) removed); 4 are high priority. Full report: outputs/files/keyword_report.csv.",
+    "sections": [
+      {
+        "heading": "Keywords by priority",
+        "table": [
+          {
+            "keyword": "puffer jacket sale",
+            "monthly_searches": 6600,
+            "intent": "transactional",
+            "intent_basis": "cue 'sale'",
+            "category": "Outerwear",
+            "target_page": "/collections/outerwear",
+            "score": 7920.0,
+            "rank": 1,
+            "priority": "High"
+          },
+          {
+            "keyword": "best running shoes for flat feet",
+            "monthly_searches": 8100,
+            "intent": "commercial",
+            "intent_basis": "cue 'best'",
+            "category": "Footwear",
+            "target_page": "/guides/best-footwear",
+            "score": 7776.0,
+            "rank": 2,
+            "priority": "High"
+          },
+          {
+            "keyword": "buy running shoes online",
+            "monthly_searches": 5400,
+            "intent": "transactional",
+            "intent_basis": "cue 'buy'",
+            "category": "Footwear",
+            "target_page": "/collections/footwear",
+            "score": 6480.0,
+            "rank": 3,
+            "priority": "High"
+          },
+          {
+            "keyword": "cotton t-shirt price",
+            "monthly_searches": 2900,
+            "intent": "transactional",
+            "intent_basis": "cue 'price'",
+            "category": "Apparel",
+            "target_page": "/collections/apparel",
+            "score": 3480.0,
+            "rank": 4,
+            "priority": "High"
+          },
+          {
+            "keyword": "what is merino wool",
+            "monthly_searches": 4400,
+            "intent": "informational",
+            "intent_basis": "cue 'what'",
+            "category": "Materials",
+            "target_page": "/blog/materials-guide",
+            "score": 2112.0,
+            "rank": 5,
+            "priority": "Medium"
+          },
+          {
+            "keyword": "top 10 canvas tote bags",
+            "monthly_searches": 1900,
+            "intent": "commercial",
+            "intent_basis": "cue 'top'",
+            "category": "Accessories",
+            "target_page": "/guides/best-accessories",
+            "score": 1824.0,
+            "rank": 6,
+            "priority": "Medium"
+          },
+          {
+            "keyword": "denim jeans vs chinos",
+            "monthly_searches": 1600,
+            "intent": "commercial",
+            "intent_basis": "cue 'vs'",
+            "category": "Apparel",
+            "target_page": "/guides/best-apparel",
+            "score": 1536.0,
+            "rank": 7,
+            "priority": "Medium"
+          },
+          {
+            "keyword": "water bottle 750ml cheap",
+            "monthly_searches": 880,
+            "intent": "transactional",
+            "intent_basis": "cue 'cheap'",
+            "category": "Accessories",
+            "target_page": "/collections/accessories",
+            "score": 1056.0,
+            "rank": 8,
+            "priority": "Medium"
+          },
+          {
+            "keyword": "merino scarf discount code",
+            "monthly_searches": 720,
+            "intent": "transactional",
+            "intent_basis": "cue 'discount'",
+            "category": "Accessories",
+            "target_page": "/collections/accessories",
+            "score": 864.0,
+            "rank": 9,
+            "priority": "Low"
+          },
+          {
+            "keyword": "acme apparel",
+            "monthly_searches": 2400,
+            "intent": "navigational",
+            "intent_basis": "cue 'acme'",
+            "category": "General",
+            "target_page": "/ (homepage / account)",
+            "score": 720.0,
+            "rank": 10,
+            "priority": "Low"
+          },
+          {
+            "keyword": "how to wash wool beanie",
+            "monthly_searches": 1300,
+            "intent": "informational",
+            "intent_basis": "cue 'how'",
+            "category": "Accessories",
+            "target_page": "/blog/accessories-guide",
+            "score": 624.0,
+            "rank": 11,
+            "priority": "Low"
+          },
+          {
+            "keyword": "leather belt sizing guide",
+            "monthly_searches": 1000,
+            "intent": "informational",
+            "intent_basis": "cue 'guide'",
+            "category": "Accessories",
+            "target_page": "/blog/accessories-guide",
+            "score": 480.0,
+            "rank": 12,
+            "priority": "Low"
+          },
+          {
+            "keyword": "order corduroy overshirt",
+            "monthly_searches": 260,
+            "intent": "transactional",
+            "intent_basis": "cue 'order'",
+            "category": "Apparel",
+            "target_page": "/collections/apparel",
+            "score": 312.0,
+            "rank": 13,
+            "priority": "Low"
+          },
+          {
+            "keyword": "acme store login",
+            "monthly_searches": 900,
+            "intent": "navigational",
+            "intent_basis": "cue 'acme'",
+            "category": "General",
+            "target_page": "/ (homepage / account)",
+            "score": 270.0,
+            "rank": 14,
+            "priority": "Low"
+          }
+        ],
+        "columns": [
+          "rank",
+          "keyword",
+          "monthly_searches",
+          "intent",
+          "category",
+          "priority",
+          "target_page"
+        ]
+      }
+    ]
+  },
+  "notes": []
+}

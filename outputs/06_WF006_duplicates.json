@@ -1,0 +1,154 @@
+{
+  "request": "Find likely duplicate products in the catalog.",
+  "run_id": "RUN-20261013204554-27f4bb",
+  "mode": "offline (deterministic rules and templates)",
+  "route": {
+    "workflow_id": "WF006",
+    "confidence": 0.905,
+    "reasoning": "matched terms ['likely', 'duplicate', 'product', 'catalog'] (evidence 22.48, runner-up 3.3)",
+    "method": "keyword",
+    "candidates": [
+      {
+        "workflow_id": "WF006",
+        "name": "Duplicate Product Detection",
+        "score": 22.48,
+        "matched": [
+          "likely",
+          "duplicate",
+          "product",
+          "catalog"
+        ]
+      },
+      {
+        "workflow_id": "WF002",
+        "name": "Product Price Validation",
+        "score": 3.3,
+        "matched": [
+          "product"
+        ]
+      },
+      {
+        "workflow_id": "WF004",
+        "name": "Product Description Generator",
+        "score": 3.3,
+        "matched": [
+          "product"
+        ]
+      }
+    ]
+  },
+  "workflow_id": "WF006",
+  "workflow_name": "Duplicate Product Detection",
+  "inputs": {
+    "catalog_file": "data/sample/catalog.csv",
+    "min_similarity": 0.75,
+    "request": "Find likely duplicate products in the catalog."
+  },
+  "trace": [
+    {
+      "n": 1,
+      "step": "Load products",
+      "tool": "load_table",
+      "attempts": 1,
+      "status": "ok",
+      "output": "loaded 13 catalog rows",
+      "ms": 2.0
+    },
+    {
+      "n": 2,
+      "step": "normalize names/SKUs",
+      "tool": "normalize_fields",
+      "attempts": 1,
+      "status": "ok",
+      "output": "normalised SKU and name for 13 rows",
+      "ms": 0.2
+    },
+    {
+      "n": 3,
+      "step": "compare identifiers",
+      "tool": "find_exact_duplicates",
+      "attempts": 1,
+      "status": "ok",
+      "output": "2 exact SKU match group(s)",
+      "ms": 0.1
+    },
+    {
+      "n": 4,
+      "step": "compare product attributes",
+      "tool": "similar_pairs",
+      "attempts": 1,
+      "status": "ok",
+      "output": "6 similar pair(s) by name + attributes",
+      "ms": 5.1
+    },
+    {
+      "n": 5,
+      "step": "group likely duplicates",
+      "tool": "group_duplicates",
+      "attempts": 1,
+      "status": "ok",
+      "output": "4 duplicate group(s)",
+      "ms": 0.1
+    },
+    {
+      "n": 6,
+      "step": "assign confidence",
+      "tool": "assign_confidence",
+      "attempts": 1,
+      "status": "ok",
+      "output": "4 record(s)",
+      "ms": 0.1
+    }
+  ],
+  "status": "completed",
+  "message": null,
+  "answer": "4 duplicate group(s) in 13 catalog rows: 2 definite (same SKU) and 2 possible (different SKU, similar name and attributes).",
+  "result": {
+    "title": "Likely duplicate products",
+    "summary": "4 duplicate group(s) in 13 catalog rows: 2 definite (same SKU) and 2 possible (different SKU, similar name and attributes).",
+    "sections": [
+      {
+        "heading": "Duplicate groups",
+        "table": [
+          {
+            "group": 1,
+            "confidence": "Definite duplicate",
+            "score": 1.0,
+            "products": "SKU-1006 / Running Shoes Blue Size 10 | sku-1006 / Running Shoes - Blue (Size 10) | SKU-3101 / Mens Running Shoe Blue 10 (possible)",
+            "matching_fields": "identical sku; name similarity 1.00; same brand, color, size, category; name similarity 0.91; same brand, color, size, category"
+          },
+          {
+            "group": 2,
+            "confidence": "Definite duplicate",
+            "score": 1.0,
+            "products": "SKU-1008 / Canvas Tote Bag | SKU-1008 / Canvas Tote Bag Natural",
+            "matching_fields": "identical sku; name similarity 0.79; same brand, color, size, category"
+          },
+          {
+            "group": 3,
+            "confidence": "Possible duplicate (high)",
+            "score": 1.0,
+            "products": "SKU-1001 / Classic Cotton T-Shirt (White) | SKU-3102 / Classic Cotton Tshirt White",
+            "matching_fields": "name similarity 1.00; same brand, color, size, category"
+          },
+          {
+            "group": 4,
+            "confidence": "Possible duplicate (high)",
+            "score": 1.0,
+            "products": "SKU-1005 / Wool Beanie Grey | SKU-3103 / Wool Beanie Gray",
+            "matching_fields": "name similarity 1.00; same brand, color, size, category"
+          }
+        ],
+        "columns": [
+          "group",
+          "confidence",
+          "score",
+          "products",
+          "matching_fields"
+        ],
+        "empty": "No duplicates found."
+      }
+    ]
+  },
+  "notes": []
+}

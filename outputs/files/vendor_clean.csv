@@ -1,0 +1,7 @@
+sku,product_name,cost,quantity,color,vendor,warnings
+V-501,Merino Wool Scarf,18.5,120,Rust,KnitHouse,
+V-502,Wool Beanie,9.2,300,Grey,KnitHouse,
+V-505,Chunky Knit Sweater,,60,Oat,KnitHouse,cost 'twenty' is not a number (cleared)
+V-506,Thermal Socks (3-pack),6.4,500,Mixed,KnitHouse,
+V-507,Alpaca Throw Blanket,32,,Sand,KnitHouse,quantity -5 below 0 (cleared)
+V-508,Fleece Ear Warmer,4.75,150,Navy,KnitHouse,

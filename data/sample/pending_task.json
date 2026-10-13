@@ -1,0 +1,7 @@
+{
+  "task_id": "TASK-482",
+  "title": "Fix checkout API timeouts",
+  "description": "Checkout API requests to the payments service time out under load. Investigate the Python API and Postgres queries, add caching where safe and ship a fix.",
+  "estimated_hours": 8,
+  "role": "developer"
+}

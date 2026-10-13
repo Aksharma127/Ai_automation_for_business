@@ -1,0 +1,14 @@
+sku,product_name,category,collection,our_price,tags
+SKU-1001,Classic Cotton T-Shirt (White),Apparel,core,19.99,basics;cotton
+SKU-1002,Classic Cotton T-Shirt (Black),Apparel,core,19.99,basics;cotton
+SKU-1003,Slim Fit Denim Jeans,Apparel,core,59.00,denim
+SKU-1004,Leather Belt Brown,Accessories,core,34.50,leather
+SKU-1005,Wool Beanie Grey,Accessories,autumn-2026,24.00,wool;winter
+SKU-1006,Running Shoes Blue Size 10,Footwear,core,89.00,running
+SKU-1007,Running Shoes Black Size 9,Footwear,core,89.00,running
+SKU-1008,Canvas Tote Bag,Accessories,core,18.00,canvas
+SKU-1009,Hooded Sweatshirt Navy,Apparel,autumn-2026,49.00,fleece;winter
+SKU-1010,Sports Water Bottle 750ml,Accessories,core,15.00,sports
+SKU-1011,Quilted Puffer Jacket Olive,Outerwear,autumn-2026,129.00,new;winter
+SKU-1012,Merino Wool Scarf Rust,Accessories,autumn-2026,39.00,new;wool
+SKU-1013,Corduroy Overshirt Camel,Apparel,autumn-2026,69.00,new;corduroy

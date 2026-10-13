@@ -1,0 +1,68 @@
+{
+  "request": "Where is order ORD-9999?",
+  "run_id": "RUN-20261013204554-8daf65",
+  "mode": "offline (deterministic rules and templates)",
+  "route": {
+    "workflow_id": "WF005",
+    "confidence": 0.864,
+    "reasoning": "matched terms ['order', 'ord'] (evidence 11.99, runner-up 0)",
+    "method": "keyword",
+    "candidates": [
+      {
+        "workflow_id": "WF005",
+        "name": "Customer Order Status",
+        "score": 11.99,
+        "matched": [
+          "order",
+          "ord"
+        ]
+      },
+      {
+        "workflow_id": "WF001",
+        "name": "Inventory Restock Check",
+        "score": 0,
+        "matched": []
+      },
+      {
+        "workflow_id": "WF002",
+        "name": "Product Price Validation",
+        "score": 0,
+        "matched": []
+      }
+    ]
+  },
+  "workflow_id": "WF005",
+  "workflow_name": "Customer Order Status",
+  "inputs": {
+    "order_id": "ORD-9999",
+    "email": null,
+    "orders_db": "data/sample/orders.json",
+    "shipments_api": "data/sample/shipments.json",
+    "request": "Where is order ORD-9999?"
+  },
+  "trace": [
+    {
+      "n": 1,
+      "step": "Validate identifier",
+      "tool": "validate_identifier",
+      "attempts": 1,
+      "status": "ok",
+      "output": "order_id = ORD-9999",
+      "ms": 0.1
+    },
+    {
+      "n": 2,
+      "step": "search order data",
+      "tool": "find_records",
+      "attempts": 1,
+      "status": "needs_input",
+      "output": "I couldn't find an order for ORD-9999. Could you share another identifier, such as the order ID from your confirmation email or the email address used at checkout?",
+      "ms": 0.2
+    }
+  ],
+  "status": "needs_input",
+  "message": "I couldn't find an order for ORD-9999. Could you share another identifier, such as the order ID from your confirmation email or the email address used at checkout?",
+  "answer": "I couldn't find an order for ORD-9999. Could you share another identifier, such as the order ID from your confirmation email or the email address used at checkout?",
+  "result": null,
+  "notes": []
+}

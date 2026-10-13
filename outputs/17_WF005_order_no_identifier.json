@@ -1,0 +1,58 @@
+{
+  "request": "Where is my order?",
+  "run_id": "RUN-20261013204555-7d0c69",
+  "mode": "offline (deterministic rules and templates)",
+  "route": {
+    "workflow_id": "WF005",
+    "confidence": 0.698,
+    "reasoning": "matched terms ['order'] (evidence 7.19, runner-up 0)",
+    "method": "keyword",
+    "candidates": [
+      {
+        "workflow_id": "WF005",
+        "name": "Customer Order Status",
+        "score": 7.19,
+        "matched": [
+          "order"
+        ]
+      },
+      {
+        "workflow_id": "WF001",
+        "name": "Inventory Restock Check",
+        "score": 0,
+        "matched": []
+      },
+      {
+        "workflow_id": "WF002",
+        "name": "Product Price Validation",
+        "score": 0,
+        "matched": []
+      }
+    ]
+  },
+  "workflow_id": "WF005",
+  "workflow_name": "Customer Order Status",
+  "inputs": {
+    "order_id": null,
+    "email": null,
+    "orders_db": "data/sample/orders.json",
+    "shipments_api": "data/sample/shipments.json",
+    "request": "Where is my order?"
+  },
+  "trace": [
+    {
+      "n": 1,
+      "step": "Validate identifier",
+      "tool": "validate_identifier",
+      "attempts": 1,
+      "status": "needs_input",
+      "output": "Please provide an order ID (e.g. ORD-1001) or the customer email used for the order.",
+      "ms": 0.1
+    }
+  ],
+  "status": "needs_input",
+  "message": "Please provide an order ID (e.g. ORD-1001) or the customer email used for the order.",
+  "answer": "Please provide an order ID (e.g. ORD-1001) or the customer email used for the order.",
+  "result": null,
+  "notes": []
+}

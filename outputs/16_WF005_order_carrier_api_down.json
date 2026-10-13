@@ -1,0 +1,131 @@
+{
+  "request": "Track my order ORD-1004 please",
+  "run_id": "RUN-20261013204554-b862c8",
+  "mode": "offline (deterministic rules and templates)",
+  "route": {
+    "workflow_id": "WF005",
+    "confidence": 0.959,
+    "reasoning": "matched terms ['track', 'order', 'ord'] (evidence 19.18, runner-up 0)",
+    "method": "keyword",
+    "candidates": [
+      {
+        "workflow_id": "WF005",
+        "name": "Customer Order Status",
+        "score": 19.18,
+        "matched": [
+          "track",
+          "order",
+          "ord"
+        ]
+      },
+      {
+        "workflow_id": "WF001",
+        "name": "Inventory Restock Check",
+        "score": 0,
+        "matched": []
+      },
+      {
+        "workflow_id": "WF002",
+        "name": "Product Price Validation",
+        "score": 0,
+        "matched": []
+      }
+    ]
+  },
+  "workflow_id": "WF005",
+  "workflow_name": "Customer Order Status",
+  "inputs": {
+    "order_id": "ORD-1004",
+    "email": null,
+    "orders_db": "data/sample/orders.json",
+    "shipments_api": "data/sample/shipments.json",
+    "request": "Track my order ORD-1004 please"
+  },
+  "trace": [
+    {
+      "n": 1,
+      "step": "Validate identifier",
+      "tool": "validate_identifier",
+      "attempts": 1,
+      "status": "ok",
+      "output": "order_id = ORD-1004",
+      "ms": 0.1
+    },
+    {
+      "n": 2,
+      "step": "search order data",
+      "tool": "find_records",
+      "attempts": 1,
+      "status": "ok",
+      "output": "found 1 order(s)",
+      "ms": 0.2
+    },
+    {
+      "n": 3,
+      "step": "retrieve order status",
+      "tool": "pick_fields",
+      "attempts": 1,
+      "status": "ok",
+      "output": "1 record(s)",
+      "ms": 0.0
+    },
+    {
+      "n": 4,
+      "step": "retrieve shipment information",
+      "tool": "shipment_lookup → shipment_lookup_degraded",
+      "attempts": 3,
+      "retries": [
+        "DHL tracking API timed out",
+        "DHL tracking API timed out",
+        "DHL tracking API timed out"
+      ],
+      "status": "degraded",
+      "output": "tracking fetched for 1 order(s)",
+      "ms": 351.8
+    },
+    {
+      "n": 5,
+      "step": "summarize current status",
+      "tool": "summarize_orders",
+      "attempts": 1,
+      "status": "ok",
+      "output": "1 record(s)",
+      "ms": 0.1
+    }
+  ],
+  "status": "completed",
+  "message": null,
+  "answer": "Found 1 order(s) for ORD-1004.",
+  "result": {
+    "title": "Order status for ORD-1004",
+    "summary": "Found 1 order(s) for ORD-1004.",
+    "sections": [
+      {
+        "heading": "Orders",
+        "table": [
+          {
+            "order_id": "ORD-1004",
+            "order_date": "2026-10-10",
+            "order_status": "shipped",
+            "items": "1x Leather Belt Brown",
+            "carrier": "DHL",
+            "tracking_number": "DHL-OUTAGE-0001",
+            "shipment": "carrier tracking temporarily unavailable"
+          }
+        ],
+        "columns": [
+          "order_id",
+          "order_date",
+          "order_status",
+          "items",
+          "carrier",
+          "tracking_number",
+          "shipment"
+        ]
+      }
+    ]
+  },
+  "notes": [
+    "ORD-1004: live tracking unavailable (DHL tracking API timed out); showing order-system status only"
+  ]
+}

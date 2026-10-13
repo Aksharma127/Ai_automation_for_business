@@ -1,0 +1,66 @@
+{
+  "request": "Create a campaign brief for the new collection.",
+  "run_id": "RUN-20261013204554-056156",
+  "mode": "offline (deterministic rules and templates)",
+  "route": {
+    "workflow_id": "WF007",
+    "confidence": 0.967,
+    "reasoning": "matched terms ['create', 'campaign', 'brief', 'collection'] (evidence 25.16, runner-up 0.9)",
+    "method": "keyword",
+    "candidates": [
+      {
+        "workflow_id": "WF007",
+        "name": "Marketing Campaign Brief",
+        "score": 25.16,
+        "matched": [
+          "create",
+          "campaign",
+          "brief",
+          "collection"
+        ]
+      },
+      {
+        "workflow_id": "WF004",
+        "name": "Product Description Generator",
+        "score": 0.9,
+        "matched": [
+          "create"
+        ]
+      },
+      {
+        "workflow_id": "WF001",
+        "name": "Inventory Restock Check",
+        "score": 0,
+        "matched": []
+      }
+    ]
+  },
+  "workflow_id": "WF007",
+  "workflow_name": "Marketing Campaign Brief",
+  "inputs": {
+    "goal": null,
+    "start_date": null,
+    "end_date": null,
+    "target_audience": null,
+    "promotion": null,
+    "collection": "autumn-2026",
+    "product_file": "data/sample/products.csv",
+    "request": "Create a campaign brief for the new collection."
+  },
+  "trace": [
+    {
+      "n": 1,
+      "step": "Validate inputs",
+      "tool": "collect_fields",
+      "attempts": 1,
+      "status": "needs_input",
+      "output": "Before I write the brief I need the campaign goal, start date and end date. For example: \"...to drive online sales from 2026-11-01 to 2026-11-30\".",
+      "ms": 0.1
+    }
+  ],
+  "status": "needs_input",
+  "message": "Before I write the brief I need the campaign goal, start date and end date. For example: \"...to drive online sales from 2026-11-01 to 2026-11-30\".",
+  "answer": "Before I write the brief I need the campaign goal, start date and end date. For example: \"...to drive online sales from 2026-11-01 to 2026-11-30\".",
+  "result": null,
+  "notes": []
+}

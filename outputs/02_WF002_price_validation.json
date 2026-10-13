@@ -1,0 +1,390 @@
+{
+  "request": "Find products where vendor price differs by more than 10%.",
+  "run_id": "RUN-20261013204554-1dd36c",
+  "mode": "offline (deterministic rules and templates)",
+  "route": {
+    "workflow_id": "WF002",
+    "confidence": 0.926,
+    "reasoning": "matched terms ['product', 'vendor', 'price', 'differ', 'more', 'than', '10'] (evidence 37.45, runner-up 5.38)",
+    "method": "keyword",
+    "candidates": [
+      {
+        "workflow_id": "WF002",
+        "name": "Product Price Validation",
+        "score": 37.45,
+        "matched": [
+          "product",
+          "vendor",
+          "price",
+          "differ",
+          "more",
+          "than",
+          "10"
+        ]
+      },
+      {
+        "workflow_id": "WF003",
+        "name": "Vendor File Processing",
+        "score": 5.38,
+        "matched": [
+          "vendor"
+        ]
+      },
+      {
+        "workflow_id": "WF004",
+        "name": "Product Description Generator",
+        "score": 3.3,
+        "matched": [
+          "product"
+        ]
+      }
+    ]
+  },
+  "workflow_id": "WF002",
+  "workflow_name": "Product Price Validation",
+  "inputs": {
+    "product_file": "data/sample/products.csv",
+    "vendor_file": "data/sample/vendor_prices.csv",
+    "tolerance_pct": 10,
+    "request": "Find products where vendor price differs by more than 10%."
+  },
+  "trace": [
+    {
+      "n": 1,
+      "step": "Load product prices",
+      "tool": "load_tables",
+      "attempts": 1,
+      "status": "ok",
+      "output": "loaded 13 internal and 10 vendor prices",
+      "ms": 3.6
+    },
+    {
+      "n": 2,
+      "step": "match products by SKU",
+      "tool": "join_tables",
+      "attempts": 1,
+      "status": "ok",
+      "output": "9 matched by SKU, 4 without vendor price, 1 unknown vendor SKUs",
+      "ms": 0.1
+    },
+    {
+      "n": 3,
+      "step": "compare internal and vendor prices",
+      "tool": "add_columns",
+      "attempts": 1,
+      "status": "ok",
+      "output": "9 record(s)",
+      "ms": 0.2
+    },
+    {
+      "n": 4,
+      "step": "calculate percentage difference",
+      "tool": "add_columns",
+      "attempts": 1,
+      "status": "ok",
+      "output": "9 record(s)",
+      "ms": 0.3
+    },
+    {
+      "n": 5,
+      "step": "flag exceptions",
+      "tool": "filter_rows",
+      "attempts": 1,
+      "status": "ok",
+      "output": "4 exception(s) flagged",
+      "ms": 0.2
+    }
+  ],
+  "status": "completed",
+  "message": null,
+  "answer": "9 products matched by SKU; 4 differ from the vendor price by more than 10%.",
+  "result": {
+    "title": "Price validation report",
+    "summary": "9 products matched by SKU; 4 differ from the vendor price by more than 10%.",
+    "sections": [
+      {
+        "heading": "Exceptions (difference above tolerance)",
+        "table": [
+          {
+            "sku": "SKU-1002",
+            "product_name": "Classic Cotton T-Shirt (Black)",
+            "category": "Apparel",
+            "collection": "core",
+            "our_price": 19.99,
+            "tags": "basics;cotton",
+            "vendor_sku": "SKU-1002",
+            "vendor_product_name": "Cotton Tee Black",
+            "vendor_price": 22.99,
+            "currency": "USD",
+            "updated_at": "2026-10-01",
+            "price_diff": 3.0,
+            "pct_diff": 15.01
+          },
+          {
+            "sku": "SKU-1004",
+            "product_name": "Leather Belt Brown",
+            "category": "Accessories",
+            "collection": "core",
+            "our_price": 34.5,
+            "tags": "leather",
+            "vendor_sku": "SKU-1004",
+            "vendor_product_name": "Belt Leather Brown",
+            "vendor_price": 29.9,
+            "currency": "USD",
+            "updated_at": "2026-10-01",
+            "price_diff": -4.6,
+            "pct_diff": 13.33
+          },
+          {
+            "sku": "SKU-1006",
+            "product_name": "Running Shoes Blue Size 10",
+            "category": "Footwear",
+            "collection": "core",
+            "our_price": 89,
+            "tags": "running",
+            "vendor_sku": "SKU-1006",
+            "vendor_product_name": "Runner Blue 10",
+            "vendor_price": 99,
+            "currency": "USD",
+            "updated_at": "2026-10-01",
+            "price_diff": 10,
+            "pct_diff": 11.24
+          },
+          {
+            "sku": "SKU-1009",
+            "product_name": "Hooded Sweatshirt Navy",
+            "category": "Apparel",
+            "collection": "autumn-2026",
+            "our_price": 49,
+            "tags": "fleece;winter",
+            "vendor_sku": "SKU-1009",
+            "vendor_product_name": "Hoodie Navy",
+            "vendor_price": 42,
+            "currency": "USD",
+            "updated_at": "2026-10-01",
+            "price_diff": -7,
+            "pct_diff": 14.29
+          }
+        ],
+        "columns": [
+          "sku",
+          "product_name",
+          "our_price",
+          "vendor_price",
+          "price_diff",
+          "pct_diff"
+        ],
+        "empty": "No product exceeds the tolerance."
+      },
+      {
+        "heading": "All matched products",
+        "table": [
+          {
+            "sku": "SKU-1001",
+            "product_name": "Classic Cotton T-Shirt (White)",
+            "category": "Apparel",
+            "collection": "core",
+            "our_price": 19.99,
+            "tags": "basics;cotton",
+            "vendor_sku": "SKU-1001",
+            "vendor_product_name": "Cotton Tee White",
+            "vendor_price": 19.49,
+            "currency": "USD",
+            "updated_at": "2026-10-01",
+            "price_diff": -0.5,
+            "pct_diff": 2.5
+          },
+          {
+            "sku": "SKU-1002",
+            "product_name": "Classic Cotton T-Shirt (Black)",
+            "category": "Apparel",
+            "collection": "core",
+            "our_price": 19.99,
+            "tags": "basics;cotton",
+            "vendor_sku": "SKU-1002",
+            "vendor_product_name": "Cotton Tee Black",
+            "vendor_price": 22.99,
+            "currency": "USD",
+            "updated_at": "2026-10-01",
+            "price_diff": 3.0,
+            "pct_diff": 15.01
+          },
+          {
+            "sku": "SKU-1003",
+            "product_name": "Slim Fit Denim Jeans",
+            "category": "Apparel",
+            "collection": "core",
+            "our_price": 59,
+            "tags": "denim",
+            "vendor_sku": "SKU-1003",
+            "vendor_product_name": "Denim Jeans Slim",
+            "vendor_price": 59,
+            "currency": "USD",
+            "updated_at": "2026-10-01",
+            "price_diff": 0,
+            "pct_diff": 0.0
+          },
+          {
+            "sku": "SKU-1004",
+            "product_name": "Leather Belt Brown",
+            "category": "Accessories",
+            "collection": "core",
+            "our_price": 34.5,
+            "tags": "leather",
+            "vendor_sku": "SKU-1004",
+            "vendor_product_name": "Belt Leather Brown",
+            "vendor_price": 29.9,
+            "currency": "USD",
+            "updated_at": "2026-10-01",
+            "price_diff": -4.6,
+            "pct_diff": 13.33
+          },
+          {
+            "sku": "SKU-1005",
+            "product_name": "Wool Beanie Grey",
+            "category": "Accessories",
+            "collection": "autumn-2026",
+            "our_price": 24,
+            "tags": "wool;winter",
+            "vendor_sku": "SKU-1005",
+            "vendor_product_name": "Beanie Wool Grey",
+            "vendor_price": 24.5,
+            "currency": "USD",
+            "updated_at": "2026-10-01",
+            "price_diff": 0.5,
+            "pct_diff": 2.08
+          },
+          {
+            "sku": "SKU-1006",
+            "product_name": "Running Shoes Blue Size 10",
+            "category": "Footwear",
+            "collection": "core",
+            "our_price": 89,
+            "tags": "running",
+            "vendor_sku": "SKU-1006",
+            "vendor_product_name": "Runner Blue 10",
+            "vendor_price": 99,
+            "currency": "USD",
+            "updated_at": "2026-10-01",
+            "price_diff": 10,
+            "pct_diff": 11.24
+          },
+          {
+            "sku": "SKU-1007",
+            "product_name": "Running Shoes Black Size 9",
+            "category": "Footwear",
+            "collection": "core",
+            "our_price": 89,
+            "tags": "running",
+            "vendor_sku": "SKU-1007",
+            "vendor_product_name": "Runner Black 9",
+            "vendor_price": 89.9,
+            "currency": "USD",
+            "updated_at": "2026-10-01",
+            "price_diff": 0.9,
+            "pct_diff": 1.01
+          },
+          {
+            "sku": "SKU-1009",
+            "product_name": "Hooded Sweatshirt Navy",
+            "category": "Apparel",
+            "collection": "autumn-2026",
+            "our_price": 49,
+            "tags": "fleece;winter",
+            "vendor_sku": "SKU-1009",
+            "vendor_product_name": "Hoodie Navy",
+            "vendor_price": 42,
+            "currency": "USD",
+            "updated_at": "2026-10-01",
+            "price_diff": -7,
+            "pct_diff": 14.29
+          },
+          {
+            "sku": "SKU-1010",
+            "product_name": "Sports Water Bottle 750ml",
+            "category": "Accessories",
+            "collection": "core",
+            "our_price": 15,
+            "tags": "sports",
+            "vendor_sku": "SKU-1010",
+            "vendor_product_name": "Bottle 750",
+            "vendor_price": 15,
+            "currency": "USD",
+            "updated_at": "2026-10-01",
+            "price_diff": 0,
+            "pct_diff": 0.0
+          }
+        ],
+        "columns": [
+          "sku",
+          "product_name",
+          "our_price",
+          "vendor_price",
+          "price_diff",
+          "pct_diff"
+        ]
+      },
+      {
+        "heading": "Products with no vendor price",
+        "table": [
+          {
+            "sku": "SKU-1008",
+            "product_name": "Canvas Tote Bag",
+            "category": "Accessories",
+            "collection": "core",
+            "our_price": 18,
+            "tags": "canvas"
+          },
+          {
+            "sku": "SKU-1011",
+            "product_name": "Quilted Puffer Jacket Olive",
+            "category": "Outerwear",
+            "collection": "autumn-2026",
+            "our_price": 129,
+            "tags": "new;winter"
+          },
+          {
+            "sku": "SKU-1012",
+            "product_name": "Merino Wool Scarf Rust",
+            "category": "Accessories",
+            "collection": "autumn-2026",
+            "our_price": 39,
+            "tags": "new;wool"
+          },
+          {
+            "sku": "SKU-1013",
+            "product_name": "Corduroy Overshirt Camel",
+            "category": "Apparel",
+            "collection": "autumn-2026",
+            "our_price": 69,
+            "tags": "new;corduroy"
+          }
+        ],
+        "columns": [
+          "sku",
+          "product_name"
+        ],
+        "empty": "None."
+      },
+      {
+        "heading": "Vendor SKUs not in our catalog",
+        "table": [
+          {
+            "vendor_sku": "SKU-2001",
+            "vendor_product_name": "Unknown Vendor Item",
+            "vendor_price": 12,
+            "currency": "USD",
+            "updated_at": "2026-10-01"
+          }
+        ],
+        "columns": [
+          "vendor_sku",
+          "vendor_product_name",
+          "vendor_price"
+        ],
+        "empty": "None."
+      }
+    ]
+  },
+  "notes": []
+}

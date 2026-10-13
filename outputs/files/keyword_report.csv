@@ -1,0 +1,15 @@
+rank,keyword,monthly_searches,intent,category,priority,target_page,score
+1,puffer jacket sale,6600,transactional,Outerwear,High,/collections/outerwear,7920.0
+2,best running shoes for flat feet,8100,commercial,Footwear,High,/guides/best-footwear,7776.0
+3,buy running shoes online,5400,transactional,Footwear,High,/collections/footwear,6480.0
+4,cotton t-shirt price,2900,transactional,Apparel,High,/collections/apparel,3480.0
+5,what is merino wool,4400,informational,Materials,Medium,/blog/materials-guide,2112.0
+6,top 10 canvas tote bags,1900,commercial,Accessories,Medium,/guides/best-accessories,1824.0
+7,denim jeans vs chinos,1600,commercial,Apparel,Medium,/guides/best-apparel,1536.0
+8,water bottle 750ml cheap,880,transactional,Accessories,Medium,/collections/accessories,1056.0
+9,merino scarf discount code,720,transactional,Accessories,Low,/collections/accessories,864.0
+10,acme apparel,2400,navigational,General,Low,/ (homepage / account),720.0
+11,how to wash wool beanie,1300,informational,Accessories,Low,/blog/accessories-guide,624.0
+12,leather belt sizing guide,1000,informational,Accessories,Low,/blog/accessories-guide,480.0
+13,order corduroy overshirt,260,transactional,Apparel,Low,/collections/apparel,312.0
+14,acme store login,900,navigational,General,Low,/ (homepage / account),270.0

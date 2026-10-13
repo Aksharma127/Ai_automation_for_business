@@ -1,0 +1,254 @@
+{
+  "request": "Create a campaign brief for the new collection to drive online sales with 20% off outerwear, targeting young professionals, from 2026-11-01 to 2026-11-30.",
+  "run_id": "RUN-20261013204555-c83521",
+  "mode": "offline (deterministic rules and templates)",
+  "route": {
+    "workflow_id": "WF007",
+    "confidence": 0.844,
+    "reasoning": "matched terms ['create', 'campaign', 'brief', 'collection'] (evidence 25.16, runner-up 7.19)",
+    "method": "keyword",
+    "candidates": [
+      {
+        "workflow_id": "WF007",
+        "name": "Marketing Campaign Brief",
+        "score": 25.16,
+        "matched": [
+          "create",
+          "campaign",
+          "brief",
+          "collection"
+        ]
+      },
+      {
+        "workflow_id": "WF008",
+        "name": "SEO Keyword Classification",
+        "score": 7.19,
+        "matched": [
+          "target"
+        ]
+      },
+      {
+        "workflow_id": "WF004",
+        "name": "Product Description Generator",
+        "score": 0.9,
+        "matched": [
+          "create"
+        ]
+      }
+    ]
+  },
+  "workflow_id": "WF007",
+  "workflow_name": "Marketing Campaign Brief",
+  "inputs": {
+    "goal": "drive online sales",
+    "start_date": "2026-11-01",
+    "end_date": "2026-11-30",
+    "target_audience": "young professionals",
+    "promotion": "20% off outerwear",
+    "collection": "autumn-2026",
+    "product_file": "data/sample/products.csv",
+    "request": "Create a campaign brief for the new collection to drive online sales with 20% off outerwear, targeting young professionals, from 2026-11-01 to 2026-11-30."
+  },
+  "trace": [
+    {
+      "n": 1,
+      "step": "Validate inputs",
+      "tool": "collect_fields",
+      "attempts": 1,
+      "status": "ok",
+      "output": "goal, start_date, end_date, target_audience, promotion provided, 0 missing",
+      "ms": 0.2
+    },
+    {
+      "n": 2,
+      "step": "identify campaign objective",
+      "tool": "classify_text",
+      "attempts": 1,
+      "status": "ok",
+      "output": "objective = sales",
+      "ms": 0.1
+    },
+    {
+      "n": 3,
+      "step": "summarize products",
+      "tool": "query_table",
+      "attempts": 1,
+      "status": "ok",
+      "output": "5 product(s) in the collection",
+      "ms": 2.1
+    },
+    {
+      "n": 4,
+      "step": "create messaging",
+      "tool": "generate_content",
+      "attempts": 1,
+      "status": "ok",
+      "output": "Headline: New in: the autumn-2026 collection – 20% off outerwear\nKey message: Made for ...",
+      "ms": 0.5
+    },
+    {
+      "n": 5,
+      "step": "create channel recommendations",
+      "tool": "lookup_rules",
+      "attempts": 1,
+      "status": "ok",
+      "output": "4 channels recommended",
+      "ms": 0.1
+    },
+    {
+      "n": 6,
+      "step": "create campaign checklist",
+      "tool": "build_timeline",
+      "attempts": 1,
+      "status": "ok",
+      "output": "9 dated checklist items",
+      "ms": 0.1
+    }
+  ],
+  "status": "completed",
+  "message": null,
+  "answer": "Brief for a sales campaign running 2026-11-01 to 2026-11-30.",
+  "result": {
+    "title": "Campaign brief: autumn-2026 collection",
+    "summary": "Brief for a sales campaign running 2026-11-01 to 2026-11-30.",
+    "sections": [
+      {
+        "heading": "Overview",
+        "fields": {
+          "Goal": "drive online sales",
+          "Objective": "sales",
+          "Target audience": "young professionals",
+          "Promotion": "20% off outerwear",
+          "Start date": "2026-11-01",
+          "End date": "2026-11-30"
+        }
+      },
+      {
+        "heading": "Featured products",
+        "table": [
+          {
+            "sku": "SKU-1005",
+            "product_name": "Wool Beanie Grey",
+            "category": "Accessories",
+            "our_price": 24
+          },
+          {
+            "sku": "SKU-1009",
+            "product_name": "Hooded Sweatshirt Navy",
+            "category": "Apparel",
+            "our_price": 49
+          },
+          {
+            "sku": "SKU-1011",
+            "product_name": "Quilted Puffer Jacket Olive",
+            "category": "Outerwear",
+            "our_price": 129
+          },
+          {
+            "sku": "SKU-1012",
+            "product_name": "Merino Wool Scarf Rust",
+            "category": "Accessories",
+            "our_price": 39
+          },
+          {
+            "sku": "SKU-1013",
+            "product_name": "Corduroy Overshirt Camel",
+            "category": "Apparel",
+            "our_price": 69
+          }
+        ]
+      },
+      {
+        "heading": "Messaging",
+        "text": "Headline: New in: the autumn-2026 collection – 20% off outerwear\nKey message: Made for young professionals: Wool Beanie Grey, Hooded Sweatshirt Navy, Quilted Puffer Jacket Olive, Merino Wool Scarf Rust and Corduroy Overshirt Camel. Available 2026-11-01 to 2026-11-30.\nCall to action: Shop the collection and get 20% off outerwear."
+      },
+      {
+        "heading": "Channel recommendations",
+        "table": [
+          {
+            "channel": "Email",
+            "why": "Highest-converting owned channel; segment by past purchases"
+          },
+          {
+            "channel": "Meta Ads (retargeting)",
+            "why": "Re-engage site visitors who viewed the collection"
+          },
+          {
+            "channel": "Google Search & Shopping",
+            "why": "Capture high-intent searches for the products"
+          },
+          {
+            "channel": "Onsite banner",
+            "why": "Convert existing traffic during the promotion window"
+          }
+        ]
+      },
+      {
+        "heading": "Campaign checklist",
+        "table": [
+          {
+            "due": "2026-10-11",
+            "task": "Finalise brief, budget and KPIs",
+            "owner": "Marketing lead",
+            "done": "[ ]"
+          },
+          {
+            "due": "2026-10-14",
+            "task": "Brief creative team (photo, copy, video)",
+            "owner": "Creative",
+            "done": "[ ]"
+          },
+          {
+            "due": "2026-10-18",
+            "task": "Confirm stock levels for featured products",
+            "owner": "Merchandising",
+            "done": "[ ]"
+          },
+          {
+            "due": "2026-10-22",
+            "task": "Build email + landing page; set up promo codes",
+            "owner": "CRM / Web",
+            "done": "[ ]"
+          },
+          {
+            "due": "2026-10-27",
+            "task": "Set up and QA paid campaigns and tracking",
+            "owner": "Performance",
+            "done": "[ ]"
+          },
+          {
+            "due": "2026-11-01",
+            "task": "Launch campaign",
+            "owner": "Marketing lead",
+            "done": "[ ]"
+          },
+          {
+            "due": "2026-11-23",
+            "task": "Mid-campaign performance review",
+            "owner": "Marketing lead",
+            "done": "[ ]"
+          },
+          {
+            "due": "2026-11-30",
+            "task": "Campaign ends; switch off promo codes",
+            "owner": "CRM / Web",
+            "done": "[ ]"
+          },
+          {
+            "due": "2026-12-07",
+            "task": "Post-campaign report",
+            "owner": "Analytics",
+            "done": "[ ]"
+          }
+        ],
+        "columns": [
+          "due",
+          "task",
+          "owner",
+          "done"
+        ]
+      }
+    ]
+  },
+  "notes": []
+}
