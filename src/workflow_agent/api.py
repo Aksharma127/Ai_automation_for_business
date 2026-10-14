@@ -27,9 +27,10 @@ from contextlib import asynccontextmanager
 from pathlib import Path
 from typing import Any
 
-from fastapi import Depends, FastAPI, File, Form, HTTPException, Request, Response, UploadFile
+from fastapi import Depends, FastAPI, File, Form, HTTPException, Request, Response, Security, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from fastapi.security import APIKeyHeader
 from pydantic import BaseModel, Field
 
 from .engine import RunNotFound, WorkflowAgent
@@ -108,6 +109,10 @@ class RateLimiter:
                 return 60 - (now - q[0])
             q.append(now)
         return None
+
+
+# Declared for the OpenAPI schema only, so /docs shows an "Authorize" button; _extract_key does the check.
+API_KEY_HEADER = APIKeyHeader(name="X-API-Key", auto_error=False)
 
 
 def _principal_for(key: str) -> str:
@@ -200,7 +205,7 @@ def create_app(settings: Settings | None = None, agent: WorkflowAgent | None = N
         agent_: WorkflowAgent = state["agent"]
         return agent_
 
-    def principal(request: Request) -> str | None:
+    def principal(request: Request, _key: str | None = Security(API_KEY_HEADER)) -> str | None:
         key = _extract_key(request)
         if settings.api_keys and not settings.auth_disabled and (
                 not key or not any(hmac.compare_digest(key, k) for k in settings.api_keys)):
