@@ -1,5 +1,12 @@
 # AI Agent Workflow Automation
 
+[![CI](https://github.com/Aksharma127/Ai_automation_for_business/actions/workflows/ci.yml/badge.svg)](https://github.com/Aksharma127/Ai_automation_for_business/actions/workflows/ci.yml)
+![Python](https://img.shields.io/badge/python-3.11%2B-blue)
+![LangGraph](https://img.shields.io/badge/agent-LangGraph-1C3C3C)
+![Workflows](https://img.shields.io/badge/workflows-10%20from%20Excel-success)
+![Tests](https://img.shields.io/badge/tests-79%20passing-success)
+![Offline](https://img.shields.io/badge/runs%20offline-no%20API%20key%20needed-informational)
+
 One reusable agent that reads business workflows from an **Excel file**, understands a user's
 request, **selects the right workflow**, **executes its steps with tools**, applies the
 workflow's **conditions and error handling**, and returns a traceable **final result**.
@@ -23,6 +30,22 @@ User Request ─► Agent ─► Identify Workflow ─► Workflow Steps ─► 
                (LangGraph)  (LLM tool call     (from Excel)      (tool registry,   (safe expressions,       (report + step trace)
                              or keyword index)                    simulated APIs)   halts, retries)
 ```
+
+## Where to find each submission item
+
+| Assignment requirement | Where it is |
+|---|---|
+| Source code | [`src/workflow_agent/`](src/workflow_agent/) |
+| Excel workflow file | [`data/AI_Agent_Workflow_Assessment.xlsx`](data/AI_Agent_Workflow_Assessment.xlsx) |
+| Setup and installation | [Quick start](#quick-start) |
+| All 10 workflows (input, steps, tools, conditions, output) | [`docs/workflow_analysis.md`](docs/workflow_analysis.md), bound in [`config/workflow_bindings.yaml`](config/workflow_bindings.yaml) |
+| Example inputs / requests | [`examples/requests.yaml`](examples/requests.yaml) (10 Excel test questions + 10 condition and error cases) |
+| Outputs / results | [`outputs/`](outputs/) and the [results table](#results-for-all-10-workflows) below |
+| Sample environment file | [`.env.example`](.env.example) |
+| Architecture and agent flow | [Architecture](#architecture) |
+| Adding an 11th workflow | [Adding an 11th workflow](#adding-an-11th-workflow) |
+| Technical decisions | [Technical decisions](#technical-decisions) |
+| Tests | [`tests/`](tests/) (`pytest`, 79 tests, no API key needed), run in [CI](.github/workflows/ci.yml) on every push |
 
 ---
 
@@ -57,7 +80,7 @@ Other commands:
 | `python -m workflow_agent --run-examples` | Run every request in `examples/requests.yaml`, save results in `outputs/` |
 | `python -m workflow_agent --docs` | Regenerate `docs/workflow_analysis.md` from the Excel + bindings |
 | `python -m workflow_agent --offline ...` | Ignore any configured LLM |
-| `pytest` | Run the test suite (78 tests, no API key needed) |
+| `pytest` | Run the test suite (79 tests, no API key needed) |
 
 ### Example
 
@@ -311,6 +334,9 @@ Only if no existing tool fits do you write a new one: a function decorated with
 Everything below is optional: with no extra configuration the project still runs locally, offline,
 on SQLite and the simulated services. All settings are documented in [`.env.example`](.env.example).
 
+<details>
+<summary><b>Show deployment details</b>: Docker, HTTP API, resumable runs, real integrations, safety limits, observability, CI and evals</summary>
+
 ### Run it
 
 ```bash
@@ -401,6 +427,8 @@ and input accuracy and fails below the thresholds in the file. With an `ANTHROPI
 secret, CI also runs the eval against a real model (`--eval --llm`, model `vars.EVAL_LLM_MODEL`,
 default `claude-haiku-5-5`).
 
+</details>
+
 ---
 
 ## Technical decisions
@@ -423,7 +451,7 @@ default `claude-haiku-5-5`).
   may need the LLM router. Adding `keywords`/examples in the binding fixes specific cases.
 - Offline date extraction expects ISO dates (`2026-11-01`). The LLM extractor handles natural dates.
 - The API rate limiter is per process. With several replicas, rate-limit at the gateway as well.
-- The HTTP integrations follow the generic contract below. A specific vendor (Shopify, UPS, ...)
+- The HTTP integrations follow the generic contract in [Real integrations](#real-integrations). A specific vendor (Shopify, UPS, ...)
   needs its field mapping adjusted in `integrations/services.py`.
 
 ---
@@ -454,7 +482,7 @@ default `claude-haiku-5-5`).
 ├── evals/routing_extraction.yaml  # scored test set
 ├── docs/workflow_analysis.md
 ├── scripts/make_sample_data.py
-├── tests/                   # 78 tests: routing, every workflow, conditions, errors, LLM path, 11th workflow, API, resume, integrations
+├── tests/                   # 79 tests: routing, every workflow, conditions, errors, LLM path, 11th workflow, API, resume, integrations
 ├── Dockerfile, docker-compose.yml, .github/workflows/ci.yml
 ├── .env.example, requirements.txt, pyproject.toml
 ```
