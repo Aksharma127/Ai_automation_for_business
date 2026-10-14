@@ -102,7 +102,7 @@ def load_registry(excel_path: Path, bindings_path: Path) -> Registry:
             if r.get("Workflow_ID") and r.get("Test_Request"):
                 examples.setdefault(str(r["Workflow_ID"]).strip(), []).append(str(r["Test_Request"]).strip())
 
-    bindings = yaml.safe_load(bindings_path.read_text()) if bindings_path.exists() else {}
+    bindings = yaml.safe_load(bindings_path.read_text(encoding="utf-8")) if bindings_path.exists() else {}
     bindings = bindings or {}
     workflows: dict[str, WorkflowSpec] = {}
     warnings: list[str] = []

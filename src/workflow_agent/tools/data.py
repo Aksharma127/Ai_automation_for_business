@@ -48,7 +48,7 @@ def _parse(raw: bytes | Path, suffix: str, name: str, sheet: str | int | None) -
         elif suffix in {".xlsx", ".xlsm"}:
             df = pd.read_excel(src, sheet_name=sheet or 0)
         elif suffix == ".json":
-            data = json.loads(raw if isinstance(raw, bytes) else raw.read_text())
+            data = json.loads(raw if isinstance(raw, bytes) else raw.read_text(encoding="utf-8"))
             if isinstance(data, dict) and isinstance(data.get("rows"), list):
                 data = data["rows"]
             return data if isinstance(data, list) else [data]
@@ -113,7 +113,7 @@ def load_json(ctx: ToolContext, path: str) -> Any:
     p = resolve_path(ctx, path)
     if not p.is_file():
         raise ToolError(f"file not found: {path}")
-    return json.loads(p.read_text())
+    return json.loads(p.read_text(encoding="utf-8"))
 
 
 @tool("add_columns", provides=("calculator",))
@@ -194,7 +194,7 @@ def export_table(ctx: ToolContext, table: Table, filename: str, columns: list[st
     out = ctx.output_dir / "files" / filename
     out.parent.mkdir(parents=True, exist_ok=True)
     cols = columns or list(dict.fromkeys(k for r in table for k in r))
-    with out.open("w", newline="") as fh:
+    with out.open("w", newline="", encoding="utf-8") as fh:
         w = csv.DictWriter(fh, fieldnames=cols, extrasaction="ignore")
         w.writeheader()
         w.writerows(table)

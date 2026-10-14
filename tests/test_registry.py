@@ -48,7 +48,7 @@ def test_all_ten_workflows_load_and_validate(agent):
 def _copy_sources(tmp_path):
     xlsx = tmp_path / "wf.xlsx"
     shutil.copy(ROOT / "data" / "AI_Agent_Workflow_Assessment.xlsx", xlsx)
-    bindings = yaml.safe_load((ROOT / "config" / "workflow_bindings.yaml").read_text())
+    bindings = yaml.safe_load((ROOT / "config" / "workflow_bindings.yaml").read_text(encoding="utf-8"))
     return xlsx, bindings
 
 
@@ -59,7 +59,7 @@ def test_eleventh_workflow_is_data_only(tmp_path):
     wb.save(xlsx)
     bindings["WF011"] = WF011_BINDING
     yml = tmp_path / "b.yaml"
-    yml.write_text(yaml.safe_dump(bindings, allow_unicode=True))
+    yml.write_text(yaml.safe_dump(bindings, allow_unicode=True), encoding="utf-8")
 
     settings = Settings(workflow_excel=xlsx, bindings_file=yml, output_dir=tmp_path / "o",
                         database_url=f"sqlite:///{tmp_path / 'a.db'}", checkpoint_url="memory", force_offline=True)
@@ -77,7 +77,7 @@ def test_binding_out_of_sync_with_excel_is_reported(tmp_path):
     bindings["WF001"]["steps"] = bindings["WF001"]["steps"][:-1]
     bindings["WF002"]["steps"][0]["tool"] = "no_such_tool"
     yml = tmp_path / "b.yaml"
-    yml.write_text(yaml.safe_dump(bindings, allow_unicode=True))
+    yml.write_text(yaml.safe_dump(bindings, allow_unicode=True), encoding="utf-8")
     reg = load_registry(xlsx, yml)
     assert not reg.get("WF001").executable and not reg.get("WF002").executable
     assert any("Excel lists 5 steps but the binding has 4" in w for w in reg.warnings)

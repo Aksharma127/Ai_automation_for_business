@@ -40,7 +40,7 @@ def value_matches(expected: Any, actual: Any) -> bool:
 
 
 def run_eval(agent: WorkflowAgent, path: Path) -> dict[str, Any]:
-    spec = yaml.safe_load(path.read_text())
+    spec = yaml.safe_load(path.read_text(encoding="utf-8"))
     cases = spec["cases"]
     routed_ok = 0
     fields_total = fields_ok = 0
