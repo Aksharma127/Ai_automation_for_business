@@ -37,7 +37,7 @@ class FileOrderService:
         self.path = path
 
     def find_orders(self, field: str, value: str) -> list[dict[str, Any]]:
-        orders = json.loads(self.path.read_text())
+        orders = json.loads(self.path.read_text(encoding="utf-8"))
         return [o for o in orders if str(o.get(field, "")).strip().lower() == str(value).strip().lower()]
 
 
@@ -50,7 +50,7 @@ class FileCarrierService:
         self._calls: dict[str, int] = {}
 
     def track(self, tracking_number: str, *, attempt_key: str) -> dict[str, Any]:
-        db = json.loads(self.path.read_text())
+        db = json.loads(self.path.read_text(encoding="utf-8"))
         rec = db.get(tracking_number)
         if rec is None:
             return {"status": "not_found"}

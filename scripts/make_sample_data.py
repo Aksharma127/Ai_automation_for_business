@@ -57,7 +57,7 @@ def execution_logs() -> None:
     slow_step = {"WF004": "Create description", "WF006": "Compare attributes", "WF003": "Validate fields", "WF008": "Classify intent"}
     start = datetime(2026, 10, 1, 8, 0, 0)
     out = SAMPLE / "execution_logs.csv"
-    with out.open("w", newline="") as fh:
+    with out.open("w", newline="", encoding="utf-8") as fh:
         w = csv.writer(fh)
         w.writerow(["run_id", "timestamp", "workflow_id", "workflow_name", "step", "status", "duration_sec", "error_message"])
         run = 0
