@@ -399,13 +399,16 @@ class WorkflowAgent:
         snapshot = self.graph.get_state({"configurable": {"thread_id": run_id}})
         if not snapshot.next:
             raise ValueError(f"run {run_id} is not waiting for a reply (status: {record['status']})")
-        return self._invoke(Command(resume=answer), run_id, principal)
+        return self._invoke(Command(resume=answer), run_id, principal, spent=record)
 
-    def _invoke(self, payload: Any, run_id: str, principal: str | None) -> dict[str, Any]:
+    def _invoke(self, payload: Any, run_id: str, principal: str | None,
+                spent: dict[str, Any] | None = None) -> dict[str, Any]:
         cfg = {"configurable": {"thread_id": run_id}}
+        spent = spent or {}
         budget = llm_api.RunBudget(llm_api.model_name(self.llm), self.settings.max_llm_calls_per_run,
                                    self.settings.max_llm_cost_per_run_usd, self.settings.llm_price_input,
-                                   self.settings.llm_price_output)
+                                   self.settings.llm_price_output, spent_calls=int(spent.get("llm_calls") or 0),
+                                   spent_cost_usd=float(spent.get("cost_usd") or 0.0))
         ctx = ToolContext(llm=self.llm, root=ROOT, output_dir=self.settings.output_dir, run_id=run_id,
                           services=self.services, store=self.store,
                           allowed_dirs=tuple(Path(d) if Path(d).is_absolute() else ROOT / d

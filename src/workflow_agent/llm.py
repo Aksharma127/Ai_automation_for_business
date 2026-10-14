@@ -130,13 +130,20 @@ class BudgetExceeded(RuntimeError):
 
 
 class RunBudget(BaseCallbackHandler):
-    """Per-run LLM usage accounting and hard limits (attached as a LangChain callback)."""
+    """Per-run LLM usage accounting and hard limits (attached as a LangChain callback).
+
+    ``spent_calls`` / ``spent_cost_usd`` carry what earlier segments of a paused-and-resumed run
+    already used, so the limits apply to the whole run. ``snapshot()`` reports this segment only.
+    """
 
     raise_error = True  # make on_chat_model_start's BudgetExceeded abort the call
 
     def __init__(self, model: str, max_calls: int, max_cost_usd: float,
-                 price_in: float | None = None, price_out: float | None = None):
+                 price_in: float | None = None, price_out: float | None = None,
+                 spent_calls: int = 0, spent_cost_usd: float = 0.0):
         self.model = model
+        self.spent_calls = spent_calls
+        self.spent_cost_usd = spent_cost_usd
         self.max_calls = max_calls
         self.max_cost_usd = max_cost_usd
         default = PRICES.get(model, (0.0, 0.0))
@@ -154,9 +161,9 @@ class RunBudget(BaseCallbackHandler):
     def on_chat_model_start(self, serialized: dict[str, Any], messages: list[list[Any]], *, run_id: UUID,
                             **kwargs: Any) -> None:
         with self._lock:
-            if self.calls >= self.max_calls:
+            if self.spent_calls + self.calls >= self.max_calls:
                 raise BudgetExceeded(f"LLM call limit reached ({self.max_calls} per run)")
-            if self.cost_usd >= self.max_cost_usd:
+            if self.spent_cost_usd + self.cost_usd >= self.max_cost_usd:
                 raise BudgetExceeded(f"LLM cost limit reached (${self.max_cost_usd} per run)")
             self.calls += 1
 
