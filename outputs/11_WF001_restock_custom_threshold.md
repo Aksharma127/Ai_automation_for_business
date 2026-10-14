@@ -6,11 +6,11 @@
 **Inputs:** inventory_file=data/sample/inventory.csv; threshold_override=20; reorder_multiplier=2
 
 **Steps Executed:**
-1. ✓ Load inventory — `load_table` → loaded 10 products (1.7 ms)
-2. ✓ compare current stock with minimum threshold — `add_columns` → compared stock with threshold for 10 products (0.3 ms)
-3. ✓ identify low-stock products — `filter_rows` → 5 product(s) below threshold (0.1 ms)
-4. ✓ calculate reorder quantity — `add_columns` → calculated reorder quantity for 5 product(s) (0.3 ms)
-5. ✓ generate restock list — `sort_rows` → restock list with 5 product(s), lowest stock first (0.1 ms)
+1. ✓ Load inventory — `load_table` → loaded 10 products (3.1 ms)
+2. ✓ compare current stock with minimum threshold — `add_columns` → compared stock with threshold for 10 products (0.6 ms)
+3. ✓ identify low-stock products — `filter_rows` → 5 product(s) below threshold (0.5 ms)
+4. ✓ calculate reorder quantity — `add_columns` → calculated reorder quantity for 5 product(s) (0.5 ms)
+5. ✓ generate restock list — `sort_rows` → restock list with 5 product(s), lowest stock first (0.3 ms)
 
 **Status:** Completed
 

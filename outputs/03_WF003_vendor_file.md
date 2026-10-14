@@ -6,12 +6,12 @@
 **Inputs:** vendor_file=data/sample/vendor_upload.xlsx
 
 **Steps Executed:**
-1. ✓ Read file — `load_table` → read 9 rows (7.4 ms)
-2. ✓ detect columns — `detect_columns` → mapped 6 columns (0 unmapped) (0.5 ms)
-3. ✓ normalize column names — `rename_columns` → renamed to canonical names; 8 non-empty rows (0.2 ms)
-4. ✓ validate required fields — `validate_rows` → 8 record(s) (0.1 ms)
-5. ✓ identify invalid rows — `partition_rows` → 6 valid, 2 invalid (0.2 ms)
-6. ✓ produce cleaned dataset — `export_tables` → wrote outputs/files/vendor_clean.csv (0.5 ms)
+1. ✓ Read file — `load_table` → read 9 rows (9.0 ms)
+2. ✓ detect columns — `detect_columns` → mapped 6 columns (0 unmapped) (0.8 ms)
+3. ✓ normalize column names — `rename_columns` → renamed to canonical names; 8 non-empty rows (0.4 ms)
+4. ✓ validate required fields — `validate_rows` → 8 record(s) (0.2 ms)
+5. ✓ identify invalid rows — `partition_rows` → 6 valid, 2 invalid (0.3 ms)
+6. ✓ produce cleaned dataset — `export_tables` → wrote outputs/files/vendor_clean.csv (2.0 ms)
 
 **Status:** Completed
 

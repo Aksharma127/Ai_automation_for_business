@@ -6,15 +6,18 @@ JSON-serialisable and easy to show in the execution trace.
 from __future__ import annotations
 
 import csv
+import io
 import json
 import math
 from pathlib import Path
 from typing import Any
+from urllib.parse import urlparse
 
+import httpx
 import pandas as pd
 
 from ..expressions import ExpressionError, evaluate
-from .base import ToolContext, ToolError, resolve_path, tool
+from .base import ToolContext, ToolError, TransientToolError, resolve_path, tool
 
 Table = list[dict[str, Any]]
 
@@ -34,28 +37,68 @@ def _records(df: pd.DataFrame) -> Table:
     return [{str(k): _clean(v) for k, v in row.items()} for row in df.to_dict(orient="records")]
 
 
-@tool("load_table", provides=("csv reader", "excel/csv parser", "database reader", "csv/database reader", "file reader"))
-def load_table(ctx: ToolContext, path: str, sheet: str | int | None = None) -> Table:
-    """Read a CSV, XLSX or JSON file into a list of row dicts."""
-    p = resolve_path(ctx, path)
-    if not p.exists():
-        raise ToolError(f"file not found: {path}")
-    suffix = p.suffix.lower()
+MAX_REMOTE_BYTES = 20 * 1024 * 1024
+
+
+def _parse(raw: bytes | Path, suffix: str, name: str, sheet: str | int | None) -> Table:
+    src: Any = io.BytesIO(raw) if isinstance(raw, bytes) else raw
     try:
         if suffix == ".csv":
-            df = pd.read_csv(p)
-        elif suffix in {".xlsx", ".xlsm", ".xls"}:
-            df = pd.read_excel(p, sheet_name=sheet or 0)
+            df = pd.read_csv(src)
+        elif suffix in {".xlsx", ".xlsm"}:
+            df = pd.read_excel(src, sheet_name=sheet or 0)
         elif suffix == ".json":
-            data = json.loads(p.read_text())
+            data = json.loads(raw if isinstance(raw, bytes) else raw.read_text())
+            if isinstance(data, dict) and isinstance(data.get("rows"), list):
+                data = data["rows"]
             return data if isinstance(data, list) else [data]
         else:
             raise ToolError(f"unsupported file type {suffix!r} (expected .csv, .xlsx or .json)")
     except (ValueError, OSError, pd.errors.ParserError) as exc:
-        raise ToolError(f"could not parse {path}: {exc}") from exc
+        raise ToolError(f"could not parse {name}: {exc}") from exc
     if df.empty:
-        raise ToolError(f"{path} contains no rows")
+        raise ToolError(f"{name} contains no rows")
     return _records(df)
+
+
+def _fetch_remote(ctx: ToolContext, url: str) -> bytes:
+    host = urlparse(url).hostname or ""
+    if host not in ctx.allowed_hosts:
+        raise ToolError(f"remote source host {host!r} is not in ALLOWED_SOURCE_HOSTS")
+    try:
+        with httpx.stream("GET", url, timeout=ctx.http_timeout, follow_redirects=False) as resp:
+            if resp.status_code >= 500 or resp.status_code == 429:
+                raise TransientToolError(f"{host} returned HTTP {resp.status_code}")
+            if resp.status_code >= 400:
+                raise ToolError(f"{host} returned HTTP {resp.status_code} for {url}")
+            buf = bytearray()
+            for chunk in resp.iter_bytes():
+                buf.extend(chunk)
+                if len(buf) > MAX_REMOTE_BYTES:
+                    raise ToolError(f"{url} is larger than {MAX_REMOTE_BYTES // 2**20} MB")
+            return bytes(buf)
+    except (httpx.TimeoutException, httpx.TransportError) as exc:
+        raise TransientToolError(f"{host}: {type(exc).__name__}") from exc
+
+
+@tool("load_table", provides=("csv reader", "excel/csv parser", "database reader", "csv/database reader", "file reader"))
+def load_table(ctx: ToolContext, path: str, sheet: str | int | None = None) -> Table:
+    """Read a CSV, XLSX or JSON source (local file, allow-listed URL or runstore://steps) into row dicts."""
+    if path.startswith("runstore://"):
+        if ctx.store is None:
+            raise ToolError("run history is not available in this deployment")
+        if path != "runstore://steps":
+            raise ToolError(f"unknown run-history table {path!r} (use runstore://steps)")
+        rows = ctx.store.step_log()
+        if not rows:
+            raise ToolError("the run history is empty")
+        return rows
+    if path.startswith(("http://", "https://")):
+        return _parse(_fetch_remote(ctx, path), Path(urlparse(path).path).suffix.lower(), path, sheet)
+    p = resolve_path(ctx, path)
+    if not p.is_file():
+        raise ToolError(f"file not found: {path}")
+    return _parse(p, p.suffix.lower(), path, sheet)
 
 
 @tool("load_tables", provides=("csv reader", "file reader"))
@@ -68,7 +111,7 @@ def load_tables(ctx: ToolContext, sources: dict[str, str]) -> dict[str, Table]:
 def load_json(ctx: ToolContext, path: str) -> Any:
     """Read a JSON document."""
     p = resolve_path(ctx, path)
-    if not p.exists():
+    if not p.is_file():
         raise ToolError(f"file not found: {path}")
     return json.loads(p.read_text())
 
@@ -126,13 +169,13 @@ def join_tables(ctx: ToolContext, left: Table, right: Table, left_on: str, right
             ctx.note(f"duplicate key {k} in right table; keeping the first row")
         index.setdefault(k, r)
     matched, unmatched_left, used = [], [], set()
-    for l in left:
-        k = key(l.get(left_on))
+    for row in left:
+        k = key(row.get(left_on))
         if k in index:
-            matched.append({**l, **index[k]})
+            matched.append({**row, **index[k]})
             used.add(k)
         else:
-            unmatched_left.append(l)
+            unmatched_left.append(row)
     unmatched_right = [r for r in right if key(r.get(right_on)) not in used]
     return {"matched": matched, "unmatched_left": unmatched_left, "unmatched_right": unmatched_right}
 

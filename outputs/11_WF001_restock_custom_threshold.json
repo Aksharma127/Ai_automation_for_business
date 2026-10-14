@@ -1,6 +1,6 @@
 {
   "request": "Check today's inventory and identify products that need restocking, flag anything below 20 units.",
-  "run_id": "RUN-20261013204554-71613c",
+  "run_id": "RUN-20261014002330-5d9f1564",
   "mode": "offline (deterministic rules and templates)",
   "route": {
     "workflow_id": "WF001",
@@ -56,7 +56,7 @@
       "attempts": 1,
       "status": "ok",
       "output": "loaded 10 products",
-      "ms": 1.7
+      "ms": 3.1
     },
     {
       "n": 2,
@@ -65,7 +65,7 @@
       "attempts": 1,
       "status": "ok",
       "output": "compared stock with threshold for 10 products",
-      "ms": 0.3
+      "ms": 0.6
     },
     {
       "n": 3,
@@ -74,7 +74,7 @@
       "attempts": 1,
       "status": "ok",
       "output": "5 product(s) below threshold",
-      "ms": 0.1
+      "ms": 0.5
     },
     {
       "n": 4,
@@ -83,7 +83,7 @@
       "attempts": 1,
       "status": "ok",
       "output": "calculated reorder quantity for 5 product(s)",
-      "ms": 0.3
+      "ms": 0.5
     },
     {
       "n": 5,
@@ -92,10 +92,11 @@
       "attempts": 1,
       "status": "ok",
       "output": "restock list with 5 product(s), lowest stock first",
-      "ms": 0.1
+      "ms": 0.3
     }
   ],
   "status": "completed",
+  "awaiting_reply": false,
   "message": null,
   "answer": "5 of 10 products are below their minimum stock threshold. Estimated reorder cost: $1931.15.",
   "result": {
@@ -184,5 +185,13 @@
       }
     ]
   },
-  "notes": []
+  "notes": [],
+  "usage": {
+    "llm_calls": 0,
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cost_usd": 0.0,
+    "model": ""
+  },
+  "duration_ms": 25.9
 }

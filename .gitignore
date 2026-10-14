@@ -6,3 +6,5 @@ venv/
 .env
 runs/
 *.egg-info/
+.mypy_cache/
+.ruff_cache/

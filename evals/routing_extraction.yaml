@@ -1,0 +1,66 @@
+# Scored test set for the two LLM-facing decisions: which workflow a request maps to, and which
+# inputs are read out of it. Run with
+#     python -m workflow_agent --eval            # offline (keyword router + patterns)
+#     python -m workflow_agent --eval --llm      # with the configured model
+# `expect: null` means the request must NOT be routed to any workflow.
+# Input values: exact match after normalising case/whitespace (numbers compared numerically,
+# lists as sets); a leading "~" means "contains" for free text the model may phrase differently.
+# Only list inputs the request states explicitly; defaults are not scored.
+thresholds:
+  routing_accuracy: 0.90
+  input_accuracy: 0.85
+
+cases:
+  # --- WF001 inventory restock ---------------------------------------------------------------
+  - {expect: WF001, request: "Which products need restocking?"}
+  - {expect: WF001, request: "What's running low in the warehouse? Flag anything below 15 units.", inputs: {threshold_override: 15}}
+  - {expect: WF001, request: "Run the restock check on data/sample/inventory.csv", inputs: {inventory_file: data/sample/inventory.csv}}
+  - {expect: WF001, request: "Do we need to reorder any stock this week?"}
+  # --- WF002 price validation -----------------------------------------------------------------
+  - {expect: WF002, request: "Find products where vendor price differs by more than 10%.", inputs: {tolerance_pct: 10}}
+  - {expect: WF002, request: "Compare our prices with the supplier price list, tolerance 3 percent", inputs: {tolerance_pct: 3}}
+  - {expect: WF002, request: "Are any of our product prices out of line with the vendor's prices?"}
+  - {expect: WF002, request: "Validate product pricing against vendor costs and flag mismatches over 7.5%", inputs: {tolerance_pct: 7.5}}
+  # --- WF003 vendor file processing -----------------------------------------------------------
+  - {expect: WF003, request: "Process this vendor spreadsheet and show invalid rows."}
+  - {expect: WF003, request: "Clean up the supplier upload data/sample/vendor_upload.xlsx and list the rows with errors", inputs: {vendor_file: data/sample/vendor_upload.xlsx}}
+  - {expect: WF003, request: "A vendor sent us a new product file, validate it before import"}
+  # --- WF004 product content ------------------------------------------------------------------
+  - {expect: WF004, request: "Generate SEO content for this product."}
+  - {expect: WF004, request: "Write product content for Merino Wool Scarf, category: Accessories, material: merino wool, color: rust, audience: gift shoppers.", inputs: {product_name: Merino Wool Scarf, category: Accessories, material: merino wool, color: rust, target_audience: gift shoppers}}
+  - {expect: WF004, request: "Draft a product description and meta title for the Canvas Weekender Bag, colour: olive.", inputs: {product_name: Canvas Weekender Bag, color: olive}}
+  - {expect: WF004, request: "I need an SEO friendly description for our new hiking boots"}
+  # --- WF005 order status ---------------------------------------------------------------------
+  - {expect: WF005, request: "Where is order ORD-1001?", inputs: {order_id: ORD-1001}}
+  - {expect: WF005, request: "Track my order ORD-1004 please", inputs: {order_id: ORD-1004}}
+  - {expect: WF005, request: "What's the status of my orders? My email is jane.doe@example.com", inputs: {email: jane.doe@example.com}}
+  - {expect: WF005, request: "Has my package shipped yet? Order number 1002", inputs: {order_id: "~1002"}}
+  - {expect: WF005, request: "Where is my order?"}
+  # --- WF006 duplicates -----------------------------------------------------------------------
+  - {expect: WF006, request: "Find likely duplicate products in the catalog."}
+  - {expect: WF006, request: "Are there any repeated listings in data/sample/catalog.csv?", inputs: {catalog_file: data/sample/catalog.csv}}
+  - {expect: WF006, request: "Detect near-identical product entries so we can merge them"}
+  # --- WF007 campaign brief -------------------------------------------------------------------
+  - {expect: WF007, request: "Create a campaign brief for the new collection."}
+  - {expect: WF007, request: "Create a campaign brief for the new collection to drive online sales with 20% off outerwear, targeting young professionals, from 2026-11-01 to 2026-11-30.", inputs: {goal: "~drive online sales", promotion: "~20% off", target_audience: young professionals, start_date: "2026-11-01", end_date: "2026-11-30"}}
+  - {expect: WF007, request: "Put together a marketing brief for the holiday launch, goal: grow newsletter signups, from 2026-12-01 to 2026-12-24", inputs: {goal: "~newsletter signups", start_date: "2026-12-01", end_date: "2026-12-24"}}
+  - {expect: WF007, request: "Plan a promotion campaign for the autumn collection with free shipping", inputs: {promotion: "~free shipping"}}
+  # --- WF008 keywords -------------------------------------------------------------------------
+  - {expect: WF008, request: "Classify these keywords and map them to pages."}
+  - {expect: WF008, request: "Group the search terms in data/sample/keywords.csv by intent", inputs: {keyword_file: data/sample/keywords.csv}}
+  - {expect: WF008, request: "Which landing page should each SEO keyword target?"}
+  # --- WF009 task assignment ------------------------------------------------------------------
+  - {expect: WF009, request: "Assign this urgent task to the best available developer.", inputs: {priority: urgent, role: developer}}
+  - {expect: WF009, request: "Assign an urgent task to a developer - task: migrate the cluster to Kubernetes with Terraform", inputs: {priority: urgent, role: developer, description: "~kubernetes"}}
+  - {expect: WF009, request: "Who on the team should pick up this low priority ticket? It needs about 6 hours, due 2026-10-30", inputs: {priority: low, estimated_hours: 6, deadline: "2026-10-30"}}
+  - {expect: WF009, request: "Find an analyst with capacity for a high priority request", inputs: {priority: high, role: analyst}}
+  # --- WF010 performance ----------------------------------------------------------------------
+  - {expect: WF010, request: "Which workflows are failing most often?"}
+  - {expect: WF010, request: "Show me error rates and slow steps across our automations"}
+  - {expect: WF010, request: "Which workflows fail most in our own run history?", inputs: {log_file: "runstore://steps"}}
+  - {expect: WF010, request: "Analyse data/sample/execution_logs.csv and tell me where the bottlenecks are", inputs: {log_file: data/sample/execution_logs.csv}}
+  # --- out of scope ---------------------------------------------------------------------------
+  - {expect: null, request: "Book me a flight to Paris next Tuesday."}
+  - {expect: null, request: "What's the weather like in London?"}
+  - {expect: null, request: "Tell me a joke"}
+  - {expect: null, request: "Translate 'good morning' into Spanish"}

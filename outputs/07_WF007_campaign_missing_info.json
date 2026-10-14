@@ -1,6 +1,6 @@
 {
   "request": "Create a campaign brief for the new collection.",
-  "run_id": "RUN-20261013204554-056156",
+  "run_id": "RUN-20261014002329-73697485",
   "mode": "offline (deterministic rules and templates)",
   "route": {
     "workflow_id": "WF007",
@@ -55,12 +55,21 @@
       "attempts": 1,
       "status": "needs_input",
       "output": "Before I write the brief I need the campaign goal, start date and end date. For example: \"...to drive online sales from 2026-11-01 to 2026-11-30\".",
-      "ms": 0.1
+      "ms": 0.4
     }
   ],
   "status": "needs_input",
+  "awaiting_reply": true,
   "message": "Before I write the brief I need the campaign goal, start date and end date. For example: \"...to drive online sales from 2026-11-01 to 2026-11-30\".",
   "answer": "Before I write the brief I need the campaign goal, start date and end date. For example: \"...to drive online sales from 2026-11-01 to 2026-11-30\".",
   "result": null,
-  "notes": []
+  "notes": [],
+  "usage": {
+    "llm_calls": 0,
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cost_usd": 0.0,
+    "model": ""
+  },
+  "duration_ms": 17.9
 }

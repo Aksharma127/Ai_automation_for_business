@@ -125,7 +125,9 @@ def test_missing_file_fails_cleanly(agent):
     assert s["status"] == "failed" and "file not found" in s["answer"]
 
 
-def test_run_log_feeds_wf010(agent, settings):
+def test_run_history_feeds_wf010(agent):
     agent.run("Which products need restocking?")
-    s = agent.run(f"Which workflows are failing most often? use {settings.run_log}")
+    s = agent.run("Which workflows are failing most often in our own run history?")
+    assert s["inputs"]["log_file"] == "runstore://steps"
     assert s["status"] == "completed"
+    assert any(r["workflow_id"] == "WF001" for r in rows(s, "All workflows"))

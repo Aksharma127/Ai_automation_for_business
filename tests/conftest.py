@@ -13,7 +13,8 @@ from workflow_agent.settings import Settings  # noqa: E402
 @pytest.fixture(scope="session")
 def settings(tmp_path_factory):
     tmp = tmp_path_factory.mktemp("run")
-    return Settings(output_dir=tmp / "outputs", run_log=tmp / "runs" / "log.csv", force_offline=True)
+    return Settings(output_dir=tmp / "outputs", database_url=f"sqlite:///{tmp / 'agent.db'}", checkpoint_url="memory",
+                    upload_dir=tmp / "uploads", force_offline=True)
 
 
 @pytest.fixture(scope="session")

@@ -6,9 +6,9 @@
 **Inputs:** collection=autumn-2026; product_file=data/sample/products.csv
 
 **Steps Executed:**
-1. ? Validate inputs — `collect_fields` → Before I write the brief I need the campaign goal, start date and end date. For example: "...to drive online sales from 2026-11-01 to 2026-11-30". (0.1 ms)
+1. ? Validate inputs — `collect_fields` → Before I write the brief I need the campaign goal, start date and end date. For example: "...to drive online sales from 2026-11-01 to 2026-11-30". (0.4 ms)
 
-**Status:** Needs more information
+**Status:** Needs more information (paused; reply with `--reply RUN-20261014002329-73697485 "..."` or POST /v1/runs/RUN-20261014002329-73697485/reply)
 
 **Result:**
 

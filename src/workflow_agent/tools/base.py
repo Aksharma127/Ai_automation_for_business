@@ -7,9 +7,10 @@ any existing tool without code changes.
 from __future__ import annotations
 
 import inspect
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Callable
+from typing import Any
 
 
 class WorkflowHalt(Exception):
@@ -53,6 +54,11 @@ class ToolContext:
     output_dir: Path = Path("outputs")
     run_id: str = "local"
     notes: list[str] = field(default_factory=list)  # warnings surfaced in the final result
+    services: Any = None  # integrations.Services (orders, carrier)
+    store: Any = None  # storage.RunStore, for the runstore:// data source
+    allowed_dirs: tuple[Path, ...] = ()  # file access sandbox; empty = root only
+    allowed_hosts: tuple[str, ...] = ()  # hosts http(s) data sources may be fetched from
+    http_timeout: float = 10.0
 
     def note(self, message: str) -> None:
         self.notes.append(message)
@@ -95,6 +101,19 @@ def call_tool(name: str, args: dict[str, Any], ctx: ToolContext) -> Any:
     return spec.func(ctx=ctx, **args)
 
 
+class AccessDenied(ToolError):
+    """A tool tried to read outside the configured data directories."""
+
+
 def resolve_path(ctx: ToolContext, path: str | Path) -> Path:
+    """Resolve a path and refuse anything outside the allowed data directories.
+
+    Paths can come from user requests, so this is the guard against reading arbitrary files
+    (``../../etc/passwd``, absolute paths, symlinks out of the sandbox).
+    """
     p = Path(path)
-    return p if p.is_absolute() else ctx.root / p
+    p = (p if p.is_absolute() else ctx.root / p).resolve()
+    roots = [d.resolve() for d in (ctx.allowed_dirs or (ctx.root,))]
+    if not any(p == r or r in p.parents for r in roots):
+        raise AccessDenied(f"access to {path} is not allowed (outside the configured data directories)")
+    return p

@@ -3,14 +3,14 @@
 **Selected Workflow:** WF005 · Customer Order Status
 **Routing:** keyword · confidence 0.959 · matched terms ['track', 'order', 'ord'] (evidence 19.18, runner-up 0)
 **Mode:** offline (deterministic rules and templates)
-**Inputs:** order_id=ORD-1004; orders_db=data/sample/orders.json; shipments_api=data/sample/shipments.json
+**Inputs:** order_id=ORD-1004
 
 **Steps Executed:**
-1. ✓ Validate identifier — `validate_identifier` → order_id = ORD-1004 (0.1 ms)
-2. ✓ search order data — `find_records` → found 1 order(s) (0.2 ms)
-3. ✓ retrieve order status — `pick_fields` → 1 record(s) (0.0 ms)
-4. ⚠ retrieve shipment information — `shipment_lookup → shipment_lookup_degraded` → tracking fetched for 1 order(s) (351.8 ms · retried 3x)
-5. ✓ summarize current status — `summarize_orders` → 1 record(s) (0.1 ms)
+1. ✓ Validate identifier — `validate_identifier` → order_id = ORD-1004 (0.3 ms)
+2. ✓ search order data — `lookup_orders` → found 1 order(s) (0.4 ms)
+3. ✓ retrieve order status — `pick_fields` → 1 record(s) (0.2 ms)
+4. ⚠ retrieve shipment information — `shipment_lookup → shipment_lookup_degraded` → tracking fetched for 1 order(s) (152.7 ms · retried 3x)
+5. ✓ summarize current status — `summarize_orders` → 1 record(s) (0.3 ms)
 
 **Status:** Completed
 

@@ -6,12 +6,12 @@
 **Inputs:** keyword_file=data/sample/keywords.csv
 
 **Steps Executed:**
-1. ✓ Read keywords — `load_table` → read 15 keywords (1.4 ms)
-2. ✓ remove duplicates — `dedupe_rows` → 14 unique, Buy Running Shoes Online duplicate(s) removed (0.1 ms)
-3. ✓ classify search intent — `classify_intent` → 14 record(s) (1.6 ms)
-4. ✓ map keywords to categories — `map_categories` → 14 record(s) (0.3 ms)
-5. ✓ identify high-priority keywords — `rank_rows` → scored and ranked 14 keywords (0.7 ms)
-6. ✓ export results — `export_table` → outputs/files/keyword_report.csv (0.4 ms)
+1. ✓ Read keywords — `load_table` → read 15 keywords (2.2 ms)
+2. ✓ remove duplicates — `dedupe_rows` → 14 unique, Buy Running Shoes Online duplicate(s) removed (0.4 ms)
+3. ✓ classify search intent — `classify_intent` → 14 record(s) (1.8 ms)
+4. ✓ map keywords to categories — `map_categories` → 14 record(s) (0.6 ms)
+5. ✓ identify high-priority keywords — `rank_rows` → scored and ranked 14 keywords (0.9 ms)
+6. ✓ export results — `export_table` → outputs/files/keyword_report.csv (0.8 ms)
 
 **Status:** Completed
 

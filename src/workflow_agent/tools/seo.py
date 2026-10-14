@@ -43,7 +43,7 @@ def classify_intent(ctx: ToolContext, table: Table, field: str, cues: dict[str, 
                 ctx.llm, _KwIntents,
                 "Classify each search keyword's intent as informational, commercial, transactional or navigational. "
                 f"Brand/navigational terms: {brand_terms}.",
-                "\n".join(r[field] for r in table))
+                llm_api.data("\n".join(r[field] for r in table), "keywords"))
             llm_labels = {i.keyword.lower().strip(): i.intent for i in res.items}
         except Exception as exc:
             ctx.note(f"LLM intent classification unavailable ({type(exc).__name__}); used cue rules")

@@ -1,0 +1,95 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    name: Lint, types, tests, evals
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: agent
+          POSTGRES_PASSWORD: agent
+          POSTGRES_DB: agent
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U agent -d agent" --health-interval 5s --health-timeout 3s --health-retries 10
+    env:
+      OFFLINE: "1"
+      TEST_DATABASE_URL: postgresql://agent:agent@localhost:5432/agent
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install
+        run: pip install -e ".[api,postgres,anthropic,openai,dev]"
+      - name: Ruff
+        run: ruff check src tests scripts
+      - name: Mypy
+        run: mypy
+      - name: Tests
+        run: pytest -q
+      - name: Workflows load from the Excel file
+        run: python -m workflow_agent --validate
+      - name: Example requests route to the expected workflows
+        run: python -m workflow_agent --offline --run-examples --out "$RUNNER_TEMP/outputs"
+      - name: Routing and extraction eval (offline)
+        run: python -m workflow_agent --offline --eval
+
+  llm-eval:
+    name: Routing and extraction eval (LLM)
+    runs-on: ubuntu-latest
+    # Runs only when an API key secret is configured; costs a few cents per run.
+    if: ${{ github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository }}
+    env:
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      LLM_PROVIDER: anthropic
+      LLM_MODEL: ${{ vars.EVAL_LLM_MODEL || 'claude-haiku-5-5' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install
+        if: env.ANTHROPIC_API_KEY != ''
+        run: pip install -e ".[anthropic]"
+      - name: Eval
+        if: env.ANTHROPIC_API_KEY != ''
+        run: python -m workflow_agent --eval --llm
+      - name: Skipped
+        if: env.ANTHROPIC_API_KEY == ''
+        run: echo "::notice::ANTHROPIC_API_KEY secret not set; LLM eval skipped"
+
+  docker:
+    name: Docker image
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build
+        run: docker build -t workflow-agent:ci .
+      - name: Smoke test
+        run: |
+          docker run -d --name api -p 8000:8000 -e API_KEYS=ci-key -e ALLOW_SQLITE_IN_PRODUCTION=1 workflow-agent:ci
+          for i in $(seq 1 30); do curl -sf localhost:8000/healthz && break; sleep 1; done
+          curl -sf localhost:8000/readyz
+          test "$(curl -s -o /dev/null -w '%{http_code}' localhost:8000/v1/workflows)" = 401
+          curl -sf -H 'X-API-Key: ci-key' -H 'content-type: application/json' \
+            -d '{"request":"Which products need restocking?"}' localhost:8000/v1/runs | grep -q '"status":"completed"'
+      - name: Logs
+        if: always()
+        run: docker logs api || true

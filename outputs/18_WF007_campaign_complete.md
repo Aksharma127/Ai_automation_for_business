@@ -6,13 +6,13 @@
 **Inputs:** goal=drive online sales; start_date=2026-11-01; end_date=2026-11-30; target_audience=young professionals; promotion=20% off outerwear; collection=autumn-2026; product_file=data/sample/products.csv
 
 **Steps Executed:**
-1. ✓ Validate inputs — `collect_fields` → goal, start_date, end_date, target_audience, promotion provided, 0 missing (0.2 ms)
-2. ✓ identify campaign objective — `classify_text` → objective = sales (0.1 ms)
-3. ✓ summarize products — `query_table` → 5 product(s) in the collection (2.1 ms)
+1. ✓ Validate inputs — `collect_fields` → goal, start_date, end_date, target_audience, promotion provided, 0 missing (0.6 ms)
+2. ✓ identify campaign objective — `classify_text` → objective = sales (0.3 ms)
+3. ✓ summarize products — `query_table` → 5 product(s) in the collection (3.1 ms)
 4. ✓ create messaging — `generate_content` → Headline: New in: the autumn-2026 collection – 20% off outerwear
-Key message: Made for ... (0.5 ms)
-5. ✓ create channel recommendations — `lookup_rules` → 4 channels recommended (0.1 ms)
-6. ✓ create campaign checklist — `build_timeline` → 9 dated checklist items (0.1 ms)
+Key message: Made for ... (0.3 ms)
+5. ✓ create channel recommendations — `lookup_rules` → 4 channels recommended (0.3 ms)
+6. ✓ create campaign checklist — `build_timeline` → 9 dated checklist items (0.2 ms)
 
 **Status:** Completed
 

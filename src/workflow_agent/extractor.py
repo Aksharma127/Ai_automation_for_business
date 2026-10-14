@@ -8,7 +8,7 @@ used. Either way, defaults fill the gaps and values are type-checked.
 from __future__ import annotations
 
 import re
-from typing import Any, Optional
+from typing import Any
 
 from pydantic import Field, create_model
 
@@ -54,19 +54,22 @@ def _apply_aliases(value: Any, spec: dict[str, Any]) -> Any:
     return value
 
 
-def extract_inputs(workflow: WorkflowSpec, request: str, llm: Any | None, notes: list[str]) -> dict[str, Any]:
+def extract_inputs(workflow: WorkflowSpec, request: str, llm: Any | None, notes: list[str],
+                   fill_defaults: bool = True) -> dict[str, Any]:
+    """Inputs stated in the request; with ``fill_defaults`` every declared input is present."""
     specs = {k: v for k, v in workflow.inputs.items() if v.get("extract", True)}
     found: dict[str, Any] = {}
     if llm is not None and specs:
-        fields = {name: (Optional[PY_TYPES.get(s.get("type", "string"), str)],
+        fields = {name: (PY_TYPES.get(s.get("type", "string"), str) | None,
                          Field(default=None, description=s.get("description", name)))
                   for name, s in specs.items()}
         Model = create_model(f"{workflow.id}_Inputs", **fields)
         try:
             res = llm_api.structured(llm, Model).invoke([
                 ("system", "Extract the workflow inputs that are explicitly stated in the user's request. "
-                           "Leave a field null if the request does not state it. Never guess."),
-                ("human", f"Workflow: {workflow.name}\nRequest: {request}")])
+                           "Leave a field null if the request does not state it. Never guess.\n"
+                           + llm_api.UNTRUSTED_RULE),
+                ("human", f"Workflow: {workflow.name}\nRequest:\n{llm_api.data(request, 'request')}")])
             found = {k: v for k, v in res.model_dump().items() if v not in (None, "", [])}
         except Exception as exc:
             notes.append(f"LLM input extraction failed ({type(exc).__name__}); used patterns")
@@ -83,5 +86,8 @@ def extract_inputs(workflow: WorkflowSpec, request: str, llm: Any | None, notes:
         except (TypeError, ValueError):
             notes.append(f"could not read {name}={v!r}; using default")
             v = None
-        values[name] = v if v is not None else s.get("default")
+        if v is not None:
+            values[name] = v
+        elif fill_defaults:
+            values[name] = s.get("default")
     return values

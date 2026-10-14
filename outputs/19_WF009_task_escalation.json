@@ -1,6 +1,6 @@
 {
   "request": "Assign an urgent task to a developer - task: migrate the cluster to Kubernetes with Terraform",
-  "run_id": "RUN-20261013204555-0c4ac5",
+  "run_id": "RUN-20261014002330-c68eafd8",
   "mode": "offline (deterministic rules and templates)",
   "route": {
     "workflow_id": "WF009",
@@ -54,8 +54,8 @@
       "tool": "understand_task",
       "attempts": 1,
       "status": "ok",
-      "output": "needs kubernetes, terraform; priority urgent; 8h; due 2026-10-14",
-      "ms": 1.8
+      "output": "needs kubernetes, terraform; priority urgent; 8h; due 2026-10-15",
+      "ms": 3.2
     },
     {
       "n": 2,
@@ -64,7 +64,7 @@
       "attempts": 1,
       "status": "ok",
       "output": "compared skills of 5 candidate(s)",
-      "ms": 1.6
+      "ms": 2.6
     },
     {
       "n": 3,
@@ -73,7 +73,7 @@
       "attempts": 1,
       "status": "ok",
       "output": "5 record(s)",
-      "ms": 0.1
+      "ms": 0.2
     },
     {
       "n": 4,
@@ -82,7 +82,7 @@
       "attempts": 1,
       "status": "ok",
       "output": "ranked 4 available candidate(s)",
-      "ms": 0.2
+      "ms": 0.5
     },
     {
       "n": 5,
@@ -91,12 +91,21 @@
       "attempts": 1,
       "status": "escalated",
       "output": "No available employee has the required skills (kubernetes, terraform) and 8h of spare capacity for this urgent task. Escalating to the team lead to reprioritise work or bring in outside help.",
-      "ms": 0.1
+      "ms": 0.3
     }
   ],
   "status": "escalated",
+  "awaiting_reply": false,
   "message": "No available employee has the required skills (kubernetes, terraform) and 8h of spare capacity for this urgent task. Escalating to the team lead to reprioritise work or bring in outside help.",
   "answer": "No available employee has the required skills (kubernetes, terraform) and 8h of spare capacity for this urgent task. Escalating to the team lead to reprioritise work or bring in outside help.",
   "result": null,
-  "notes": []
+  "notes": [],
+  "usage": {
+    "llm_calls": 0,
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cost_usd": 0.0,
+    "model": ""
+  },
+  "duration_ms": 23.4
 }

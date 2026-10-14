@@ -13,6 +13,11 @@ Built with **Python, LangGraph, LangChain tool calling** and any LLM supported b
 (OpenAI, Anthropic, Groq, Ollama...). It also runs **fully offline without an API key**, using
 deterministic routing and rule/template fallbacks, so it can be evaluated anywhere.
 
+It can also be deployed as a service: an authenticated HTTP API with file uploads, runs that pause
+for a missing detail and resume later (even after a restart), PostgreSQL run history, real HTTP
+integrations behind the simulated ones, per-run LLM cost limits, Docker, and CI with a scored eval
+set. See [Production deployment](#production-deployment).
+
 ```
 User Request ─► Agent ─► Identify Workflow ─► Workflow Steps ─► Tools / APIs ─► Conditions / Decisions ─► Final Result
                (LangGraph)  (LLM tool call     (from Excel)      (tool registry,   (safe expressions,       (report + step trace)
@@ -42,13 +47,17 @@ Other commands:
 |---|---|
 | `python -m workflow_agent "<request>"` | Run one request and print the selected workflow, executed steps and result |
 | `python -m workflow_agent "<request>" --json` | Same, as JSON (full state: routing, inputs, trace, result) |
-| `python -m workflow_agent -i` | Interactive chat loop |
+| `python -m workflow_agent -i` | Interactive chat loop (answers to follow-up questions continue the same run) |
+| `python -m workflow_agent --reply RUN-... "ORD-1001"` | Answer a run that paused for a missing detail |
+| `python -m workflow_agent "<request>" --file stock.csv` | Run a request on your own data file |
+| `python -m workflow_agent --serve` | Start the HTTP API on port 8000 |
+| `python -m workflow_agent --eval` | Score routing and input extraction on `evals/routing_extraction.yaml` |
 | `python -m workflow_agent --list` | Show workflows loaded from the Excel file |
 | `python -m workflow_agent --validate` | Check the Excel file and bindings are consistent |
 | `python -m workflow_agent --run-examples` | Run every request in `examples/requests.yaml`, save results in `outputs/` |
 | `python -m workflow_agent --docs` | Regenerate `docs/workflow_analysis.md` from the Excel + bindings |
 | `python -m workflow_agent --offline ...` | Ignore any configured LLM |
-| `pytest` | Run the test suite (47 tests, no API key needed) |
+| `pytest` | Run the test suite (78 tests, no API key needed) |
 
 ### Example
 
@@ -149,7 +158,10 @@ flowchart TD
 | Registry | `src/workflow_agent/registry.py` | Loads Excel + YAML, splits steps on `→`, validates step counts, tool names, arguments and Excel tool coverage |
 | Router | `src/workflow_agent/router.py` | LLM tool call (`select_workflow`) or offline IDF-weighted keyword index; confidence threshold |
 | Input extraction | `src/workflow_agent/extractor.py` | Builds a Pydantic model from the binding's input schema; LLM structured output or regex; defaults and type casting |
-| Engine | `src/workflow_agent/engine.py` | LangGraph state machine, `$reference` resolution, retries, degrade/continue/fail policies, halts, run log |
+| Engine | `src/workflow_agent/engine.py` | LangGraph state machine, `$reference` resolution, retries, step timeouts, degrade/continue/fail policies, pause/resume, checkpoints |
+| Run history | `src/workflow_agent/storage.py` | Every run and step in SQLite or PostgreSQL, with tokens, cost and duration |
+| Integrations | `src/workflow_agent/integrations/` | Order and carrier services: HTTP clients when configured, file-backed simulation otherwise |
+| HTTP API | `src/workflow_agent/api.py` | FastAPI: API keys, rate limits, uploads, run/reply/history endpoints |
 | Tools | `src/workflow_agent/tools/` | 43 registered tools: generic data tools, validation, content generation, simulated APIs, domain analytics |
 | Calculator | `src/workflow_agent/expressions.py` | Safe AST evaluator for business rules (`current_stock < threshold`), with no `eval` |
 | Output | `src/workflow_agent/render.py`, `cli.py` | Selected workflow, steps executed and final result, as Markdown or JSON |
@@ -218,9 +230,9 @@ workflow is missing a required capability.
 - Business parameters (thresholds, weights, synonyms, channel rules, page templates, intent
   cues) live in YAML, not code.
 - `docs/workflow_analysis.md` is generated from the registry, so documentation cannot drift.
-- Each run is appended to `runs/execution_log.csv` in the same format WF010 analyses, so the
-  agent can report on its own performance:
-  `python -m workflow_agent "Which workflows are failing most often? use runs/execution_log.csv"`.
+- Every run and step is stored in the run history database, and WF010 can read it in the same
+  format as its sample log, so the agent can report on its own performance:
+  `python -m workflow_agent "Which workflows fail most in our own run history?"`.
 
 ---
 
@@ -241,7 +253,7 @@ Excel step. Summary:
 | WF007 | Marketing Campaign Brief | request + `products.csv` | collect_fields, classify_text, query_table, generate_content, lookup_rules, build_timeline | objective, audience, products, messaging, channels, dated checklist |
 | WF008 | SEO Keyword Classification | `keywords.csv` | load_table, dedupe_rows, classify_intent (+LLM), map_categories, rank_rows, export_table | intent, category, priority, target page; CSV |
 | WF009 | Employee Task Assignment | `employees.csv`, `pending_task.json` or the request | understand_task (+LLM), score_skill_match, check_workload, rank_rows, select_best, generate_content | employee, reasoning, priority, deadline, alternatives |
-| WF010 | Workflow Performance Report | `execution_logs.csv` (or the agent's own run log) | load_table, run_outcomes, run_durations, frequent_errors, slow_steps, performance_recommendations | metrics, flags, errors, slow steps, recommendations |
+| WF010 | Workflow Performance Report | `execution_logs.csv` (or the agent's own run history) | load_table, run_outcomes, run_durations, frequent_errors, slow_steps, performance_recommendations | metrics, flags, errors, slow steps, recommendations |
 
 Simulated systems: where real APIs are unavailable, data lives in `data/sample/`. The order
 database is `orders.json`. The carrier tracking API is `shipments.json`, where one tracking
@@ -294,6 +306,103 @@ Only if no existing tool fits do you write a new one: a function decorated with
 
 ---
 
+## Production deployment
+
+Everything below is optional: with no extra configuration the project still runs locally, offline,
+on SQLite and the simulated services. All settings are documented in [`.env.example`](.env.example).
+
+### Run it
+
+```bash
+cp .env.example .env            # set API_KEYS, and an LLM key if you want LLM mode
+docker compose up --build       # API on :8000 + PostgreSQL
+```
+
+Or without Docker: `pip install -e ".[api,postgres,anthropic]"` then `python -m workflow_agent --serve`.
+With `APP_ENV=production` the service refuses to start without `API_KEYS` (or `AUTH_DISABLED=1`
+behind a trusted gateway) and without a PostgreSQL `DATABASE_URL`.
+
+### HTTP API
+
+Every `/v1` call needs `X-API-Key: <key>` or `Authorization: Bearer <key>`. Interactive docs are at `/docs`.
+
+| Method and path | What it does |
+|---|---|
+| `GET /healthz`, `GET /readyz` | Liveness; readiness (registry loaded, database reachable) |
+| `GET /v1/workflows` | Workflows loaded from the Excel file, and which accept an uploaded file |
+| `POST /v1/runs` `{"request": "..."}` | Run a request. The response has the workflow, inputs, steps, result, usage and a Markdown report |
+| `POST /v1/runs/upload` (multipart `request`, `file`) | Same, using an uploaded CSV, XLSX or JSON file as the workflow's data |
+| `POST /v1/runs/{run_id}/reply` `{"answer": "..."}` | Continue a run that is `awaiting_reply` |
+| `GET /v1/runs/{run_id}`, `GET /v1/runs` | Stored run with its steps; recent runs (`?status=&limit=`) |
+
+```bash
+curl -s localhost:8000/v1/runs -H "X-API-Key: $KEY" -H "content-type: application/json" \
+     -d '{"request": "Where is my order?"}'
+# -> {"run_id": "RUN-...", "status": "needs_input", "awaiting_reply": true,
+#     "question": "Please provide an order ID (e.g. ORD-1001) or the customer email used for the order.", ...}
+curl -s localhost:8000/v1/runs/RUN-.../reply -H "X-API-Key: $KEY" -H "content-type: application/json" \
+     -d '{"answer": "It is ORD-1001"}'
+# -> {"status": "completed", "workflow": {"id": "WF005", ...}, "steps": [...], ...}
+```
+
+Runs belong to the API key that started them: another key gets a 404.
+
+### Resumable runs
+
+When a workflow needs something only the user can give (an order ID, a campaign goal), the run
+pauses with LangGraph's `interrupt()` and its state is checkpointed. The reply is merged into the
+inputs and the workflow continues from the start with the new information. Checkpoints live in
+PostgreSQL (or `runs/agent.checkpoints.db` locally), so a paused run survives a restart or can be
+answered by a different replica. Requests that match no workflow pause too, and the reply is routed again.
+
+### Real integrations
+
+Set `ORDERS_API_URL` / `CARRIER_API_URL` (and optional bearer tokens) to switch WF005 from the
+simulated files to HTTP services. The tools and bindings do not change. Expected contract:
+
+| Call | Response |
+|---|---|
+| `GET {ORDERS_API_URL}/orders?order_id=ORD-1001` or `?customer_email=...` | `{"orders": [{"order_id", "customer_email", "status", "order_date", "items": [{"sku", "name", "qty"}], "tracking_number", "carrier"}]}` (a bare list also works) |
+| `GET {CARRIER_API_URL}/track/{tracking_number}` | `{"status", "last_location", "last_update", "estimated_delivery"}`, or 404 if unknown |
+
+Timeouts, 429 and 5xx responses count as transient: the step retries with backoff, then degrades
+to order-system status only. Other 4xx responses fail the step with a readable message. Data files
+can also come from `https://` URLs on hosts listed in `ALLOWED_SOURCE_HOSTS`.
+
+### Safety and limits
+
+- **Auth and rate limits:** API keys compared in constant time, and a per-key requests-per-minute limit (`RATE_LIMIT_PER_MINUTE`).
+- **Uploads:** extension allowlist (.csv, .xlsx, .json), size cap (`MAX_UPLOAD_MB`), UTF-8 check, and zip-bomb check for .xlsx. Files are stored under a random name.
+- **File sandbox:** tools can only read files under `ALLOWED_DATA_DIRS` (default `data`, `runs`, `outputs`), so a request cannot read `/etc/passwd` or `.env`.
+- **Prompt injection:** user text and file contents go to the model inside `<data>` tags, with an instruction to treat them as data. Decisions are made by the workflow's rules, not by the model.
+- **LLM cost and rate:** request timeout, client retries, a client-side rate limiter, and a per-run budget (`MAX_LLM_CALLS_PER_RUN`, `MAX_LLM_COST_PER_RUN_USD`). When the budget runs out the step falls back to its deterministic path.
+- **Step timeouts:** each tool call is limited to `STEP_TIMEOUT_SEC`. Request length is capped by `MAX_REQUEST_CHARS`.
+
+### Observability
+
+- Structured logs (`LOG_JSON=1`) with a request ID and run ID on every line.
+- Each run and step is stored in the run history with status, attempts, duration, LLM calls, tokens and estimated cost. Prices are in `llm.PRICES` or `LLM_PRICE_*_PER_MTOK`.
+- OpenTelemetry spans for runs and steps when `.[otel]` is installed; export with the standard `OTEL_*` variables.
+
+### CI and evals
+
+[`.github/workflows/ci.yml`](.github/workflows/ci.yml) runs on every push and PR:
+
+- ruff and mypy
+- the test suite, including the PostgreSQL resume test
+- `--validate`
+- every example request, checked for the right workflow
+- the offline eval
+- a Docker build with a smoke test
+
+[`evals/routing_extraction.yaml`](evals/routing_extraction.yaml) has 42 labelled requests: paraphrases,
+stated inputs, and out-of-scope requests. `python -m workflow_agent --eval` scores routing accuracy
+and input accuracy and fails below the thresholds in the file. With an `ANTHROPIC_API_KEY` repository
+secret, CI also runs the eval against a real model (`--eval --llm`, model `vars.EVAL_LLM_MODEL`,
+default `claude-haiku-5-5`).
+
+---
+
 ## Technical decisions
 
 | Decision | Why |
@@ -313,10 +422,9 @@ Only if no existing tool fits do you write a new one: a function decorated with
 - Offline routing is lexical: unusual phrasings with no workflow vocabulary ("who should take the payments bug?")
   may need the LLM router. Adding `keywords`/examples in the binding fixes specific cases.
 - Offline date extraction expects ISO dates (`2026-11-01`). The LLM extractor handles natural dates.
-- Multi-turn follow-ups (answering a `needs_input` question) are handled by sending a new,
-  complete request. A LangGraph checkpointer could resume the halted run instead.
-- Real integrations would replace `find_records` / `shipment_lookup` with HTTP clients
-  behind the same tool interface; bindings would not change.
+- The API rate limiter is per process. With several replicas, rate-limit at the gateway as well.
+- The HTTP integrations follow the generic contract below. A specific vendor (Shopify, UPS, ...)
+  needs its field mapping adjusted in `integrations/services.py`.
 
 ---
 
@@ -333,13 +441,20 @@ Only if no existing tool fits do you write a new one: a function decorated with
 │   ├── router.py        # LLM tool-call router + offline keyword router
 │   ├── extractor.py     # request → typed workflow inputs
 │   ├── expressions.py   # safe calculator for rules
-│   ├── llm.py           # provider-agnostic LLM access
+│   ├── llm.py           # provider-agnostic LLM access, per-run budget
+│   ├── api.py           # HTTP API (FastAPI)
+│   ├── storage.py       # run history (SQLite / PostgreSQL)
+│   ├── integrations/    # order + carrier services (HTTP or simulated)
+│   ├── observability.py # logging, tracing
+│   ├── evals.py         # routing / extraction scoring
 │   ├── render.py, cli.py
 │   └── tools/           # tool registry + tools (data, records, content, services, catalog, seo, people, ops)
 ├── examples/requests.yaml   # 10 Excel test questions + 10 condition/error cases
 ├── outputs/                 # saved results for every example (Markdown + JSON) and generated files
+├── evals/routing_extraction.yaml  # scored test set
 ├── docs/workflow_analysis.md
 ├── scripts/make_sample_data.py
-├── tests/                   # 47 tests: routing, every workflow, conditions, errors, LLM path, 11th workflow
+├── tests/                   # 78 tests: routing, every workflow, conditions, errors, LLM path, 11th workflow, API, resume, integrations
+├── Dockerfile, docker-compose.yml, .github/workflows/ci.yml
 ├── .env.example, requirements.txt, pyproject.toml
 ```

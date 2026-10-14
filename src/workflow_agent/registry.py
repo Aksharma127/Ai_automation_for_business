@@ -84,7 +84,7 @@ def _read_sheet(wb, name: str) -> list[dict[str, Any]]:
     if not rows:
         return []
     header = [str(h).strip() if h is not None else "" for h in rows[0]]
-    return [dict(zip(header, r)) for r in rows[1:] if any(v not in (None, "") for v in r)]
+    return [dict(zip(header, r, strict=False)) for r in rows[1:] if any(v not in (None, "") for v in r)]
 
 
 def load_registry(excel_path: Path, bindings_path: Path) -> Registry:
@@ -140,7 +140,7 @@ def _bind(spec: WorkflowSpec, b: dict[str, Any]) -> None:
     if len(raw_steps) != len(spec.steps_text):
         raise RegistryError(f"Excel lists {len(spec.steps_text)} steps but the binding has {len(raw_steps)}")
     steps = []
-    for i, (label, s) in enumerate(zip(spec.steps_text, raw_steps), start=1):
+    for i, (label, s) in enumerate(zip(spec.steps_text, raw_steps, strict=True), start=1):
         tool_name = s.get("tool")
         if tool_name not in TOOLS:
             raise RegistryError(f"step {i} ({label}) uses unknown tool {tool_name!r}")

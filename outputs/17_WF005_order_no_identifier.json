@@ -1,6 +1,6 @@
 {
   "request": "Where is my order?",
-  "run_id": "RUN-20261013204555-7d0c69",
+  "run_id": "RUN-20261014002330-80d85d8e",
   "mode": "offline (deterministic rules and templates)",
   "route": {
     "workflow_id": "WF005",
@@ -35,8 +35,6 @@
   "inputs": {
     "order_id": null,
     "email": null,
-    "orders_db": "data/sample/orders.json",
-    "shipments_api": "data/sample/shipments.json",
     "request": "Where is my order?"
   },
   "trace": [
@@ -47,12 +45,21 @@
       "attempts": 1,
       "status": "needs_input",
       "output": "Please provide an order ID (e.g. ORD-1001) or the customer email used for the order.",
-      "ms": 0.1
+      "ms": 0.3
     }
   ],
   "status": "needs_input",
+  "awaiting_reply": true,
   "message": "Please provide an order ID (e.g. ORD-1001) or the customer email used for the order.",
   "answer": "Please provide an order ID (e.g. ORD-1001) or the customer email used for the order.",
   "result": null,
-  "notes": []
+  "notes": [],
+  "usage": {
+    "llm_calls": 0,
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cost_usd": 0.0,
+    "model": ""
+  },
+  "duration_ms": 11.8
 }

@@ -4,11 +4,10 @@ import shutil
 import yaml
 from openpyxl import load_workbook
 
+from conftest import ROOT
 from workflow_agent.engine import WorkflowAgent
 from workflow_agent.registry import load_registry
 from workflow_agent.settings import Settings
-
-from conftest import ROOT
 
 WF011_ROW = ["WF011", "Low Margin Alert", "User asks which products have a low margin",
              "Product CSV; vendor price list; minimum margin",
@@ -63,7 +62,7 @@ def test_eleventh_workflow_is_data_only(tmp_path):
     yml.write_text(yaml.safe_dump(bindings, allow_unicode=True))
 
     settings = Settings(workflow_excel=xlsx, bindings_file=yml, output_dir=tmp_path / "o",
-                        run_log=tmp_path / "log.csv", force_offline=True)
+                        database_url=f"sqlite:///{tmp_path / 'a.db'}", checkpoint_url="memory", force_offline=True)
     agent = WorkflowAgent(settings=settings, llm=None)
     assert agent.registry.get("WF011").executable
     state = agent.run("Which products have a low margin under 25%?")

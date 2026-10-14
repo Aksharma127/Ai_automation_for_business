@@ -6,11 +6,11 @@
 **Inputs:** product_file=data/sample/product_input.json
 
 **Steps Executed:**
-1. ✓ Validate required attributes — `collect_fields` → product_name, category, attributes, color, target_audience attributes present, material missing (0.3 ms)
-2. ✓ create product description — `generate_content` → Meet the Quilted Puffer Jacket, part of our Outerwear range, designed for urban commute... (0.1 ms)
-3. ✓ generate short description — `generate_content` → Quilted Puffer Jacket in olive with water-resistant shell, zip-off hood and two zip poc... (0.1 ms)
-4. ✓ generate SEO title — `generate_content` → Quilted Puffer Jacket – Olive | Outerwear (0.1 ms)
-5. ✓ generate meta description — `generate_content` → Shop the Quilted Puffer Jacket in olive for urban commuters: water-resistant shell, zip... (0.1 ms)
+1. ✓ Validate required attributes — `collect_fields` → product_name, category, attributes, color, target_audience attributes present, material missing (1.1 ms)
+2. ✓ create product description — `generate_content` → Meet the Quilted Puffer Jacket, part of our Outerwear range, designed for urban commute... (0.4 ms)
+3. ✓ generate short description — `generate_content` → Quilted Puffer Jacket in olive with water-resistant shell, zip-off hood and two zip poc... (0.5 ms)
+4. ✓ generate SEO title — `generate_content` → Quilted Puffer Jacket – Olive | Outerwear (0.3 ms)
+5. ✓ generate meta description — `generate_content` → Shop the Quilted Puffer Jacket in olive for urban commuters: water-resistant shell, zip... (0.5 ms)
 
 **Status:** Completed
 

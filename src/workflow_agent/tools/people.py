@@ -40,7 +40,7 @@ def understand_task(ctx: ToolContext, employees_path: str, task_file: str | None
     if ctx.llm is not None:
         try:
             res = llm_api.ask_structured(ctx.llm, _Skills, "Pick the skills from the vocabulary that the task needs.",
-                                         f"Vocabulary: {vocab}\nTask: {text}")
+                                         f"Vocabulary: {vocab}\nTask:\n{llm_api.data(text, 'task')}")
             picked = [s.lower() for s in res.skills if s.lower() in vocab]
             if picked:
                 skills, method = picked, "llm"

@@ -48,7 +48,7 @@ def render_template(template: str, facts: dict[str, Any]) -> str:
         return sub(m.group(1)) or ""
 
     text = re.sub(r"\[\[(.*?)\]\]", seg, template, flags=re.S)
-    text = sub(text, strict=False) if "{" in text else text
+    text = (sub(text, strict=False) or "") if "{" in text else text
     return re.sub(r"[ \t]+", " ", text or "").replace(" .", ".").strip()
 
 
@@ -70,7 +70,7 @@ def generate_content(ctx: ToolContext, kind: str, facts: dict[str, Any], templat
         try:
             prompt = (f"Task: write the {kind.replace('_', ' ')}.\n{instructions}\n"
                       f"{'Maximum length: ' + str(max_chars) + ' characters.' if max_chars else ''}\n"
-                      f"Facts:\n{llm_api.as_json({k: v for k, v in facts.items() if v not in (None, '', [])})}\n"
+                      f"Facts:\n{llm_api.data({k: v for k, v in facts.items() if v not in (None, '', [])}, 'facts')}\n"
                       f"Missing (do not mention or guess): {missing or 'none'}")
             text = llm_api.ask_text(ctx.llm, GROUNDING_RULES, prompt).strip().strip('"')
             violation = _invented(text, facts, missing, guard_terms or {})

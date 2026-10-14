@@ -6,12 +6,12 @@
 **Inputs:** catalog_file=data/sample/catalog.csv; min_similarity=0.75
 
 **Steps Executed:**
-1. ✓ Load products — `load_table` → loaded 13 catalog rows (2.0 ms)
-2. ✓ normalize names/SKUs — `normalize_fields` → normalised SKU and name for 13 rows (0.2 ms)
-3. ✓ compare identifiers — `find_exact_duplicates` → 2 exact SKU match group(s) (0.1 ms)
-4. ✓ compare product attributes — `similar_pairs` → 6 similar pair(s) by name + attributes (5.1 ms)
-5. ✓ group likely duplicates — `group_duplicates` → 4 duplicate group(s) (0.1 ms)
-6. ✓ assign confidence — `assign_confidence` → 4 record(s) (0.1 ms)
+1. ✓ Load products — `load_table` → loaded 13 catalog rows (4.1 ms)
+2. ✓ normalize names/SKUs — `normalize_fields` → normalised SKU and name for 13 rows (0.4 ms)
+3. ✓ compare identifiers — `find_exact_duplicates` → 2 exact SKU match group(s) (0.3 ms)
+4. ✓ compare product attributes — `similar_pairs` → 6 similar pair(s) by name + attributes (5.4 ms)
+5. ✓ group likely duplicates — `group_duplicates` → 4 duplicate group(s) (0.4 ms)
+6. ✓ assign confidence — `assign_confidence` → 4 record(s) (0.3 ms)
 
 **Status:** Completed
 

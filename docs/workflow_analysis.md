@@ -16,7 +16,7 @@ For each workflow: input, required steps, tools/APIs, conditions/decisions and e
 
 | # | Excel step | Tool | What the tool does | Rule / condition |
 |---|---|---|---|---|
-| 1 | Load inventory | `load_table` | Read a CSV, XLSX or JSON file into a list of row dicts. | - |
+| 1 | Load inventory | `load_table` | Read a CSV, XLSX or JSON source (local file, allow-listed URL or runstore://steps) into row dicts. | - |
 | 2 | compare current stock with minimum threshold | `add_columns` | Add computed columns to every row using safe expressions (the calculator tool). | `threshold = coalesce(threshold_override, minimum_stock)`<br>`needs_restock = current_stock < threshold` |
 | 3 | identify low-stock products | `filter_rows` | Keep rows where the condition expression is true (the decision step). | condition: `needs_restock` |
 | 4 | calculate reorder quantity | `add_columns` | Add computed columns to every row using safe expressions (the calculator tool). | `suggested_reorder_qty = max(ceil(threshold * multiplier - current_stock), 0)`<br>`estimated_cost = round(suggested_reorder_qty * unit_cost, 2)` |
@@ -52,7 +52,7 @@ For each workflow: input, required steps, tools/APIs, conditions/decisions and e
 
 | # | Excel step | Tool | What the tool does | Rule / condition |
 |---|---|---|---|---|
-| 1 | Read file | `load_table` | Read a CSV, XLSX or JSON file into a list of row dicts. | - |
+| 1 | Read file | `load_table` | Read a CSV, XLSX or JSON source (local file, allow-listed URL or runstore://steps) into row dicts. | - |
 | 2 | detect columns | `detect_columns (LLM + fallback)` | Map raw file headers to canonical column names using synonyms (LLM for leftovers). | - |
 | 3 | normalize column names | `rename_columns` | Rename columns to canonical names, trim text values and drop fully empty rows. | - |
 | 4 | validate required fields | `validate_rows` | Annotate each row with blocking errors (missing required fields) and non-blocking warnings. | required: `['sku', 'product_name']` |
@@ -81,7 +81,7 @@ For each workflow: input, required steps, tools/APIs, conditions/decisions and e
 
 - **Trigger:** User asks for an order status
 - **Input (Excel):** Order ID or customer email
-- **Inputs extracted from the request:** `order_id`, `email`, `orders_db` (default `data/sample/orders.json`), `shipments_api` (default `data/sample/shipments.json`)
+- **Inputs extracted from the request:** `order_id`, `email`
 - **Tools/APIs (Excel):** Order database/API, shipment lookup
 - **Decision logic (Excel):** If no order is found, ask for another identifier
 - **Expected output (Excel):** Order status, items, shipment status, and tracking information when available
@@ -90,9 +90,9 @@ For each workflow: input, required steps, tools/APIs, conditions/decisions and e
 | # | Excel step | Tool | What the tool does | Rule / condition |
 |---|---|---|---|---|
 | 1 | Validate identifier | `validate_identifier` | Check that the request contains a well-formed order ID or customer email. | - |
-| 2 | search order data | `find_records` | Look up records in a (simulated) database file where field == value (case-insensitive). | if_none: `I couldn't find an order for {value}. Could you share another identifier, such as the order ID from your confirmation email or the email address used at checkout?` |
+| 2 | search order data | `lookup_orders` | Find orders by order_id or customer_email in the order system; ask for another identifier if none. | if_none: `I couldn't find an order for {value}. Could you share another identifier, such as the order ID from your confirmation email or the email address used at checkout?` |
 | 3 | retrieve order status | `pick_fields` | Keep only the listed fields of each record. | - |
-| 4 | retrieve shipment information | `shipment_lookup` | Fetch carrier tracking for each order that has a tracking number. | retries: 2, on_error: degrade → `shipment_lookup_degraded` |
+| 4 | retrieve shipment information | `shipment_lookup` | Fetch carrier tracking for each shipped order (raises on carrier failure so the engine retries). | retries: 2, on_error: degrade → `shipment_lookup_degraded` |
 | 5 | summarize current status | `summarize_orders` | Combine order and shipment data into one status line per order. | - |
 
 ## WF006 · Duplicate Product Detection
@@ -107,7 +107,7 @@ For each workflow: input, required steps, tools/APIs, conditions/decisions and e
 
 | # | Excel step | Tool | What the tool does | Rule / condition |
 |---|---|---|---|---|
-| 1 | Load products | `load_table` | Read a CSV, XLSX or JSON file into a list of row dicts. | - |
+| 1 | Load products | `load_table` | Read a CSV, XLSX or JSON source (local file, allow-listed URL or runstore://steps) into row dicts. | - |
 | 2 | normalize names/SKUs | `normalize_fields` | Add ``<field>_norm`` columns: lower-cased, punctuation-free, synonym-folded text. | - |
 | 3 | compare identifiers | `find_exact_duplicates` | Group rows that share the same normalised identifier. | - |
 | 4 | compare product attributes | `similar_pairs` | Compare every pair of rows on name similarity plus matching attributes. | - |
@@ -145,7 +145,7 @@ For each workflow: input, required steps, tools/APIs, conditions/decisions and e
 
 | # | Excel step | Tool | What the tool does | Rule / condition |
 |---|---|---|---|---|
-| 1 | Read keywords | `load_table` | Read a CSV, XLSX or JSON file into a list of row dicts. | - |
+| 1 | Read keywords | `load_table` | Read a CSV, XLSX or JSON source (local file, allow-listed URL or runstore://steps) into row dicts. | - |
 | 2 | remove duplicates | `dedupe_rows` | Remove rows whose key is a case/whitespace-insensitive duplicate of an earlier row. | - |
 | 3 | classify search intent | `classify_intent (LLM + fallback)` | Label each keyword informational / commercial / transactional / navigational. | cues: `{'transactional': ['buy', 'order', 'price', 'prices', 'cheap', 'discount', 'coupon', 'code', 'deal', 'deals', 'sale', 'shop', 'purchase'], 'commercial': ['best', 'top', 'review', 'reviews', 'vs', 'compare', 'comparison', 'alternatives'], 'informational': ['how', 'what', 'why', 'guide', 'tips', 'sizing', 'wash', 'care', 'ideas']}` |
 | 4 | map keywords to categories | `map_categories` | Map each keyword to a product category and a recommended target page. | - |
@@ -183,7 +183,7 @@ For each workflow: input, required steps, tools/APIs, conditions/decisions and e
 
 | # | Excel step | Tool | What the tool does | Rule / condition |
 |---|---|---|---|---|
-| 1 | Load execution logs | `load_table` | Read a CSV, XLSX or JSON file into a list of row dicts. | - |
+| 1 | Load execution logs | `load_table` | Read a CSV, XLSX or JSON source (local file, allow-listed URL or runstore://steps) into row dicts. | - |
 | 2 | calculate success/failure rate | `run_outcomes` | Success and failure rate per workflow (a run fails if any step failed). | - |
 | 3 | calculate average execution time | `run_durations` | Add average and max successful-run duration (seconds) to each workflow's stats. | - |
 | 4 | identify frequent errors | `frequent_errors` | Most common error messages, with the workflow and step where they occur. | - |

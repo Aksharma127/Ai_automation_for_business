@@ -1,6 +1,6 @@
 {
   "request": "Create a campaign brief for the new collection to drive online sales with 20% off outerwear, targeting young professionals, from 2026-11-01 to 2026-11-30.",
-  "run_id": "RUN-20261013204555-c83521",
+  "run_id": "RUN-20261014002330-66c4b581",
   "mode": "offline (deterministic rules and templates)",
   "route": {
     "workflow_id": "WF007",
@@ -57,7 +57,7 @@
       "attempts": 1,
       "status": "ok",
       "output": "goal, start_date, end_date, target_audience, promotion provided, 0 missing",
-      "ms": 0.2
+      "ms": 0.6
     },
     {
       "n": 2,
@@ -66,7 +66,7 @@
       "attempts": 1,
       "status": "ok",
       "output": "objective = sales",
-      "ms": 0.1
+      "ms": 0.3
     },
     {
       "n": 3,
@@ -75,7 +75,7 @@
       "attempts": 1,
       "status": "ok",
       "output": "5 product(s) in the collection",
-      "ms": 2.1
+      "ms": 3.1
     },
     {
       "n": 4,
@@ -84,7 +84,7 @@
       "attempts": 1,
       "status": "ok",
       "output": "Headline: New in: the autumn-2026 collection – 20% off outerwear\nKey message: Made for ...",
-      "ms": 0.5
+      "ms": 0.3
     },
     {
       "n": 5,
@@ -93,7 +93,7 @@
       "attempts": 1,
       "status": "ok",
       "output": "4 channels recommended",
-      "ms": 0.1
+      "ms": 0.3
     },
     {
       "n": 6,
@@ -102,10 +102,11 @@
       "attempts": 1,
       "status": "ok",
       "output": "9 dated checklist items",
-      "ms": 0.1
+      "ms": 0.2
     }
   ],
   "status": "completed",
+  "awaiting_reply": false,
   "message": null,
   "answer": "Brief for a sales campaign running 2026-11-01 to 2026-11-30.",
   "result": {
@@ -250,5 +251,13 @@
       }
     ]
   },
-  "notes": []
+  "notes": [],
+  "usage": {
+    "llm_calls": 0,
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cost_usd": 0.0,
+    "model": ""
+  },
+  "duration_ms": 23.6
 }

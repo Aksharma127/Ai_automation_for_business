@@ -93,7 +93,7 @@ def assign_confidence(ctx: ToolContext, table: Table, groups: list[dict], high_t
     In a group that mixes both, members linked only by similarity are marked "(possible)".
     """
     show = show or ["sku", "product_name"]
-    out = []
+    out: list[dict[str, Any]] = []
     for g in groups:
         exact_rows = {i for e in g["evidence"] if e["match"].startswith("identical") for i in e["rows"]}
         fuzzy = [e["similarity"] for e in g["evidence"] if not e["match"].startswith("identical")]
@@ -105,7 +105,7 @@ def assign_confidence(ctx: ToolContext, table: Table, groups: list[dict], high_t
         else:
             conf = "Possible duplicate (medium)"
 
-        def label(i: int) -> str:
+        def label(i: int, exact_rows: set[int] = exact_rows) -> str:
             txt = " / ".join(str(table[i].get(f, "")).strip() for f in show)
             return txt + (" (possible)" if exact_rows and i not in exact_rows else "")
 

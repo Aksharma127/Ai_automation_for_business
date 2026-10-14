@@ -3,7 +3,8 @@ from __future__ import annotations
 
 from typing import Any
 
-ICON = {"ok": "✓", "degraded": "⚠", "error-continued": "⚠", "failed": "✗", "needs_input": "?", "escalated": "↑"}
+ICON = {"ok": "✓", "degraded": "⚠", "error-continued": "⚠", "failed": "✗", "needs_input": "?", "escalated": "↑",
+        "user_reply": "↩"}
 STATUS_LABEL = {
     "completed": "Completed", "needs_input": "Needs more information", "escalated": "Escalated to a human",
     "failed": "Failed", "no_workflow": "No matching workflow",
@@ -59,14 +60,20 @@ def render_run(state: dict[str, Any]) -> str:
     lines.append(f"**Mode:** {state.get('mode')}")
     if state.get("inputs"):
         shown = {k: v for k, v in state["inputs"].items() if k != "request" and v not in (None, "", [], {})}
-        lines.append("**Inputs:** " + "; ".join(f"{k}={_cell(v)}" for k, v in shown.items()))
+        lines.append("**Inputs:** " + ("; ".join(f"{k}={_cell(v)}" for k, v in shown.items()) or "none"))
     if state.get("trace"):
         lines += ["", "**Steps Executed:**"]
         for t in state["trace"]:
             extra = f" · retried {len(t['retries'])}x" if t.get("retries") else ""
+            if t["status"] == "user_reply":
+                lines.append(f"{ICON['user_reply']} User replied: {t['output']}")
+                continue
             lines.append(f"{t['n']}. {ICON.get(t['status'], '•')} {t['step']} — `{t['tool']}` → {t['output']}"
                          f" ({t['ms']} ms{extra})")
-    lines += ["", f"**Status:** {STATUS_LABEL.get(state.get('status'), state.get('status'))}", "", "**Result:**", ""]
+    status = str(STATUS_LABEL.get(state.get("status") or "", state.get("status")))
+    if state.get("awaiting_reply"):
+        status += f" (paused; reply with `--reply {state['run_id']} \"...\"` or POST /v1/runs/{state['run_id']}/reply)"
+    lines += ["", f"**Status:** {status}", "", "**Result:**", ""]
     if state.get("result"):
         if state.get("answer") and state["answer"] != state["result"].get("summary"):
             lines += [state["answer"], ""]

@@ -1,6 +1,6 @@
 {
   "request": "Write product content for Merino Wool Scarf, category: Accessories, material: merino wool, color: rust, audience: gift shoppers.",
-  "run_id": "RUN-20261013204554-24e3d5",
+  "run_id": "RUN-20261014002330-c7a131ba",
   "mode": "offline (deterministic rules and templates)",
   "route": {
     "workflow_id": "WF004",
@@ -56,7 +56,7 @@
       "attempts": 1,
       "status": "ok",
       "output": "product_name, category, material, color, target_audience attributes present, attributes missing",
-      "ms": 0.2
+      "ms": 0.8
     },
     {
       "n": 2,
@@ -65,7 +65,7 @@
       "attempts": 1,
       "status": "ok",
       "output": "Meet the Merino Wool Scarf, part of our Accessories range, designed for gift shoppers. ...",
-      "ms": 0.1
+      "ms": 0.3
     },
     {
       "n": 3,
@@ -74,7 +74,7 @@
       "attempts": 1,
       "status": "ok",
       "output": "Merino Wool Scarf in rust.",
-      "ms": 0.1
+      "ms": 0.2
     },
     {
       "n": 4,
@@ -83,7 +83,7 @@
       "attempts": 1,
       "status": "ok",
       "output": "Merino Wool Scarf – rust | Accessories",
-      "ms": 0.1
+      "ms": 0.3
     },
     {
       "n": 5,
@@ -92,10 +92,11 @@
       "attempts": 1,
       "status": "ok",
       "output": "Shop the Merino Wool Scarf in rust for gift shoppers. Explore our accessories range.",
-      "ms": 0.1
+      "ms": 0.2
     }
   ],
   "status": "completed",
+  "awaiting_reply": false,
   "message": null,
   "answer": "Generated a description, short description, SEO title and meta description from the supplied attributes only. Missing information (not invented, please supply before publishing): attributes.",
   "result": {
@@ -131,5 +132,13 @@
       }
     ]
   },
-  "notes": []
+  "notes": [],
+  "usage": {
+    "llm_calls": 0,
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cost_usd": 0.0,
+    "model": ""
+  },
+  "duration_ms": 17.2
 }

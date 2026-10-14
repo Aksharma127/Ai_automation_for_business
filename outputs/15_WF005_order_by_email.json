@@ -1,6 +1,6 @@
 {
   "request": "What's the status of my orders? My email is jane.doe@example.com",
-  "run_id": "RUN-20261013204554-914524",
+  "run_id": "RUN-20261014002330-3e24dbc2",
   "mode": "offline (deterministic rules and templates)",
   "route": {
     "workflow_id": "WF005",
@@ -36,8 +36,6 @@
   "inputs": {
     "order_id": null,
     "email": "jane.doe@example.com",
-    "orders_db": "data/sample/orders.json",
-    "shipments_api": "data/sample/shipments.json",
     "request": "What's the status of my orders? My email is jane.doe@example.com"
   },
   "trace": [
@@ -48,16 +46,16 @@
       "attempts": 1,
       "status": "ok",
       "output": "customer_email = jane.doe@example.com",
-      "ms": 0.1
+      "ms": 0.3
     },
     {
       "n": 2,
       "step": "search order data",
-      "tool": "find_records",
+      "tool": "lookup_orders",
       "attempts": 1,
       "status": "ok",
       "output": "found 2 order(s)",
-      "ms": 0.2
+      "ms": 0.5
     },
     {
       "n": 3,
@@ -66,7 +64,7 @@
       "attempts": 1,
       "status": "ok",
       "output": "2 record(s)",
-      "ms": 0.0
+      "ms": 0.3
     },
     {
       "n": 4,
@@ -78,7 +76,7 @@
       ],
       "status": "ok",
       "output": "tracking fetched for 2 order(s)",
-      "ms": 50.7
+      "ms": 51.4
     },
     {
       "n": 5,
@@ -87,10 +85,11 @@
       "attempts": 1,
       "status": "ok",
       "output": "2 record(s)",
-      "ms": 0.1
+      "ms": 0.3
     }
   ],
   "status": "completed",
+  "awaiting_reply": false,
   "message": null,
   "answer": "Found 2 order(s) for jane.doe@example.com.",
   "result": {
@@ -131,5 +130,13 @@
       }
     ]
   },
-  "notes": []
+  "notes": [],
+  "usage": {
+    "llm_calls": 0,
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cost_usd": 0.0,
+    "model": ""
+  },
+  "duration_ms": 69.7
 }

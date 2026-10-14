@@ -1,6 +1,6 @@
 {
   "request": "Which workflows are failing most often?",
-  "run_id": "RUN-20261013204554-8a576d",
+  "run_id": "RUN-20261014002329-3aa287dd",
   "mode": "offline (deterministic rules and templates)",
   "route": {
     "workflow_id": "WF010",
@@ -49,7 +49,7 @@
       "attempts": 1,
       "status": "ok",
       "output": "loaded 1972 step log rows",
-      "ms": 17.3
+      "ms": 73.1
     },
     {
       "n": 2,
@@ -58,7 +58,7 @@
       "attempts": 1,
       "status": "ok",
       "output": "success/failure rates for 7 workflows",
-      "ms": 1.1
+      "ms": 1.5
     },
     {
       "n": 3,
@@ -67,7 +67,7 @@
       "attempts": 1,
       "status": "ok",
       "output": "7 record(s)",
-      "ms": 1.3
+      "ms": 3.1
     },
     {
       "n": 4,
@@ -76,7 +76,7 @@
       "attempts": 1,
       "status": "ok",
       "output": "top 6 error patterns",
-      "ms": 0.2
+      "ms": 1.6
     },
     {
       "n": 5,
@@ -85,7 +85,7 @@
       "attempts": 1,
       "status": "ok",
       "output": "5 slowest steps",
-      "ms": 1.8
+      "ms": 2.3
     },
     {
       "n": 6,
@@ -94,10 +94,11 @@
       "attempts": 1,
       "status": "ok",
       "output": "5 workflow(s) flagged, 9 recommendation(s)",
-      "ms": 0.3
+      "ms": 1.8
     }
   ],
   "status": "completed",
+  "awaiting_reply": false,
   "message": null,
   "answer": "Analysed 373 runs of 7 workflows. 5 workflow(s) breach the thresholds (failure rate above 10% or average run time above 30s).",
   "result": {
@@ -349,5 +350,13 @@
       }
     ]
   },
-  "notes": []
+  "notes": [],
+  "usage": {
+    "llm_calls": 0,
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cost_usd": 0.0,
+    "model": ""
+  },
+  "duration_ms": 140.9
 }
