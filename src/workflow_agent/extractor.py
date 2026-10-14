@@ -8,7 +8,7 @@ used. Either way, defaults fill the gaps and values are type-checked.
 from __future__ import annotations
 
 import re
-from typing import Any
+from typing import Any, cast
 
 from pydantic import Field, create_model
 
@@ -63,7 +63,7 @@ def extract_inputs(workflow: WorkflowSpec, request: str, llm: Any | None, notes:
         fields = {name: (PY_TYPES.get(s.get("type", "string"), str) | None,
                          Field(default=None, description=s.get("description", name)))
                   for name, s in specs.items()}
-        Model = create_model(f"{workflow.id}_Inputs", **fields)
+        Model = create_model(f"{workflow.id}_Inputs", **cast(dict[str, Any], fields))
         try:
             res = llm_api.structured(llm, Model).invoke([
                 ("system", "Extract the workflow inputs that are explicitly stated in the user's request. "

@@ -33,7 +33,7 @@ import time
 import uuid
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Annotated, Any, TypedDict
+from typing import Annotated, Any, TypedDict, cast
 
 from langgraph.checkpoint.memory import InMemorySaver
 from langgraph.graph import END, START, StateGraph
@@ -157,9 +157,9 @@ def make_checkpointer(url: str) -> Any:
 
         pool = ConnectionPool(url, max_size=10, open=True, kwargs={"autocommit": True, "prepare_threshold": 0,
                                                         "row_factory": dict_row})
-        saver = PostgresSaver(pool)
-        saver.setup()
-        return saver
+        pg_saver = PostgresSaver(cast(Any, pool))  # pool yields dict rows (row_factory above)
+        pg_saver.setup()
+        return pg_saver
     raise ValueError(f"unsupported CHECKPOINT_URL scheme: {url.split(':', 1)[0]}")
 
 
@@ -180,12 +180,12 @@ class WorkflowAgent:
     # -- graph -----------------------------------------------------------------------------
     def _build_graph(self) -> Any:
         g = StateGraph(AgentState)
-        g.add_node("understand_request", self._understand)
-        g.add_node("clarify", self._clarify)
-        g.add_node("extract_inputs", self._extract)
-        g.add_node("execute_step", self._execute_step)
-        g.add_node("await_input", self._await_input)
-        g.add_node("finalize", self._finalize)
+        nodes: dict[str, Any] = {  # Any: LangGraph's node protocols expect the parameter to be named `state`
+            "understand_request": self._understand, "clarify": self._clarify, "extract_inputs": self._extract,
+            "execute_step": self._execute_step, "await_input": self._await_input, "finalize": self._finalize,
+        }
+        for name, fn in nodes.items():
+            g.add_node(name, fn)
         g.add_edge(START, "understand_request")
         g.add_conditional_edges("understand_request", lambda s: "extract_inputs" if s.get("workflow_id") else "clarify")
         g.add_conditional_edges("clarify", lambda s: "await_input" if s.get("replies", 0) < MAX_REPLIES else END)

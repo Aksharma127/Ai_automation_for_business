@@ -52,7 +52,7 @@ ignore = [
 "src/workflow_agent/storage.py" = ["S608"]  # SQL is built only from constant column names; values are bound parameters
 
 [tool.mypy]
-python_version = "3.11"
+python_version = "3.12"
 packages = ["workflow_agent"]
 mypy_path = "src"
 ignore_missing_imports = true
