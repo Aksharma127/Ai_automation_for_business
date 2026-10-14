@@ -62,9 +62,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
+        if: env.ANTHROPIC_API_KEY != ''
         with:
           python-version: "3.12"
-          cache: pip
       - name: Install
         if: env.ANTHROPIC_API_KEY != ''
         run: pip install -e ".[anthropic]"
