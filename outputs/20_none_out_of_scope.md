@@ -4,7 +4,7 @@
 **Routing:** keyword · confidence 0.0 · no workflow vocabulary found in the request
 **Mode:** offline (deterministic rules and templates)
 
-**Status:** No matching workflow
+**Status:** No matching workflow (paused; reply with `--reply RUN-20261014002330-8bf01fd8 "..."` or POST /v1/runs/RUN-20261014002330-8bf01fd8/reply)
 
 **Result:**
 

@@ -10,7 +10,8 @@ from __future__ import annotations
 import ast
 import math
 import operator
-from typing import Any, Mapping
+from collections.abc import Callable, Mapping
+from typing import Any
 
 
 def _coalesce(*values: Any) -> Any:
@@ -27,17 +28,17 @@ def _safe_div(a: Any, b: Any, default: Any = None) -> Any:
         return default
 
 
-FUNCS = {
+FUNCS: dict[str, Callable[..., Any]] = {
     "abs": abs, "max": max, "min": min, "round": round, "int": int, "float": float, "len": len,
     "ceil": math.ceil, "floor": math.floor, "coalesce": _coalesce, "safe_div": _safe_div,
     "lower": lambda s: str(s).lower(), "is_missing": lambda v: _coalesce(v) is None,
 }
 
-_BIN = {ast.Add: operator.add, ast.Sub: operator.sub, ast.Mult: operator.mul, ast.Div: operator.truediv,
+_BIN: dict[type, Callable[[Any, Any], Any]] = {ast.Add: operator.add, ast.Sub: operator.sub, ast.Mult: operator.mul, ast.Div: operator.truediv,
         ast.FloorDiv: operator.floordiv, ast.Mod: operator.mod, ast.Pow: operator.pow}
-_CMP = {ast.Lt: operator.lt, ast.LtE: operator.le, ast.Gt: operator.gt, ast.GtE: operator.ge,
+_CMP: dict[type, Callable[[Any, Any], Any]] = {ast.Lt: operator.lt, ast.LtE: operator.le, ast.Gt: operator.gt, ast.GtE: operator.ge,
         ast.Eq: operator.eq, ast.NotEq: operator.ne, ast.In: lambda a, b: a in b, ast.NotIn: lambda a, b: a not in b}
-_UNARY = {ast.USub: operator.neg, ast.UAdd: operator.pos, ast.Not: operator.not_}
+_UNARY: dict[type, Callable[[Any], Any]] = {ast.USub: operator.neg, ast.UAdd: operator.pos, ast.Not: operator.not_}
 
 
 class ExpressionError(ValueError):
@@ -70,7 +71,7 @@ def _eval(node: ast.AST, env: Mapping[str, Any], src: str) -> Any:
         return all(vals) if isinstance(node.op, ast.And) else any(vals)
     if isinstance(node, ast.Compare):
         left = _eval(node.left, env, src)
-        for op, comp in zip(node.ops, node.comparators):
+        for op, comp in zip(node.ops, node.comparators, strict=True):
             right = _eval(comp, env, src)
             if type(op) not in _CMP or not _CMP[type(op)](left, right):
                 return False

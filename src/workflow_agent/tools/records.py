@@ -13,7 +13,7 @@ from pydantic import BaseModel, Field
 
 from .. import llm as llm_api
 from ..expressions import evaluate
-from .base import Escalate, NeedsInput, ToolContext, ToolError, resolve_path, tool
+from .base import Escalate, NeedsInput, ToolContext, ToolError, tool
 from .data import Table, export_table, load_json, load_table
 
 EMAIL_RE = re.compile(r"^[\w.+-]+@[\w-]+\.[\w.-]+$")
@@ -141,7 +141,7 @@ def detect_columns(ctx: ToolContext, table: Table, canonical: dict[str, list[str
             res = llm_api.ask_structured(
                 ctx.llm, _HeaderMap,
                 "You map spreadsheet headers to a canonical schema. Only map when confident.",
-                f"Canonical columns: {list(canonical)}\nUnmapped headers: {unmapped}")
+                f"Canonical columns: {list(canonical)}\nUnmapped headers:\n{llm_api.data(unmapped, 'headers')}")
             for raw, canon in res.mapping.items():
                 if raw in unmapped and canon in canonical and canon not in mapping.values():
                     mapping[raw] = canon
@@ -156,7 +156,7 @@ def rename_columns(ctx: ToolContext, table: Table, mapping: dict[str, str], keep
     """Rename columns to canonical names, trim text values and drop fully empty rows."""
     out = []
     for i, row in enumerate(table):
-        new = {"source_row": i + 2}  # spreadsheet row number (row 1 is the header)
+        new: dict[str, Any] = {"source_row": i + 2}  # spreadsheet row number (row 1 is the header)
         for k, v in row.items():
             if k in mapping or keep_unmapped:
                 new[mapping.get(k, _norm_header(k).replace(" ", "_"))] = v.strip() if isinstance(v, str) else v
@@ -184,7 +184,7 @@ def validate_rows(ctx: ToolContext, table: Table, required: list[str], numeric: 
             if _missing(v):
                 continue
             try:
-                num = float(v)
+                num = float(str(v))
             except (TypeError, ValueError):
                 warnings.append(f"{col} '{v}' is not a number (cleared)")
                 r[col] = None
@@ -202,7 +202,8 @@ def validate_rows(ctx: ToolContext, table: Table, required: list[str], numeric: 
 @tool("partition_rows", provides=("data validation",))
 def partition_rows(ctx: ToolContext, table: Table, condition: str = "errors == ''") -> dict[str, Table]:
     """Split rows into valid (condition true) and invalid."""
-    valid, invalid = [], []
+    valid: Table = []
+    invalid: Table = []
     for r in table:
         (valid if evaluate(condition, r) else invalid).append(r)
     return {"valid": valid, "invalid": invalid}
@@ -274,7 +275,7 @@ def classify_text(ctx: ToolContext, text: str, labels: dict[str, list[str]], def
     if ctx.llm is not None:
         try:
             res = llm_api.ask_structured(ctx.llm, _Label, "Classify the text into exactly one of the labels.",
-                                         f"Labels with example cues: {labels}\nText: {text}")
+                                         f"Labels with example cues: {labels}\nText:\n{llm_api.data(text, 'text')}")
             if res.label in labels:
                 return {"label": res.label, "reason": res.reason, "method": "llm"}
         except Exception as exc:

@@ -3,14 +3,14 @@
 **Selected Workflow:** WF005 · Customer Order Status
 **Routing:** keyword · confidence 0.909 · matched terms ['statu', 'order'] (evidence 14.39, runner-up 0)
 **Mode:** offline (deterministic rules and templates)
-**Inputs:** email=jane.doe@example.com; orders_db=data/sample/orders.json; shipments_api=data/sample/shipments.json
+**Inputs:** email=jane.doe@example.com
 
 **Steps Executed:**
-1. ✓ Validate identifier — `validate_identifier` → customer_email = jane.doe@example.com (0.1 ms)
-2. ✓ search order data — `find_records` → found 2 order(s) (0.2 ms)
-3. ✓ retrieve order status — `pick_fields` → 2 record(s) (0.0 ms)
-4. ✓ retrieve shipment information — `shipment_lookup` → tracking fetched for 2 order(s) (50.7 ms · retried 1x)
-5. ✓ summarize current status — `summarize_orders` → 2 record(s) (0.1 ms)
+1. ✓ Validate identifier — `validate_identifier` → customer_email = jane.doe@example.com (0.3 ms)
+2. ✓ search order data — `lookup_orders` → found 2 order(s) (0.5 ms)
+3. ✓ retrieve order status — `pick_fields` → 2 record(s) (0.3 ms)
+4. ✓ retrieve shipment information — `shipment_lookup` → tracking fetched for 2 order(s) (51.4 ms · retried 1x)
+5. ✓ summarize current status — `summarize_orders` → 2 record(s) (0.3 ms)
 
 **Status:** Completed
 

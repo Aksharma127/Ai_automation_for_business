@@ -6,12 +6,12 @@
 **Inputs:** log_file=data/sample/execution_logs.csv; max_failure_rate=0.1; max_avg_duration_sec=30
 
 **Steps Executed:**
-1. ✓ Load execution logs — `load_table` → loaded 1972 step log rows (17.3 ms)
-2. ✓ calculate success/failure rate — `run_outcomes` → success/failure rates for 7 workflows (1.1 ms)
-3. ✓ calculate average execution time — `run_durations` → 7 record(s) (1.3 ms)
-4. ✓ identify frequent errors — `frequent_errors` → top 6 error patterns (0.2 ms)
-5. ✓ identify slow steps — `slow_steps` → 5 slowest steps (1.8 ms)
-6. ✓ generate recommendations — `performance_recommendations` → 5 workflow(s) flagged, 9 recommendation(s) (0.3 ms)
+1. ✓ Load execution logs — `load_table` → loaded 1972 step log rows (73.1 ms)
+2. ✓ calculate success/failure rate — `run_outcomes` → success/failure rates for 7 workflows (1.5 ms)
+3. ✓ calculate average execution time — `run_durations` → 7 record(s) (3.1 ms)
+4. ✓ identify frequent errors — `frequent_errors` → top 6 error patterns (1.6 ms)
+5. ✓ identify slow steps — `slow_steps` → 5 slowest steps (2.3 ms)
+6. ✓ generate recommendations — `performance_recommendations` → 5 workflow(s) flagged, 9 recommendation(s) (1.8 ms)
 
 **Status:** Completed
 

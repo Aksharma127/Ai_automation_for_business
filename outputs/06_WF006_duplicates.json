@@ -1,6 +1,6 @@
 {
   "request": "Find likely duplicate products in the catalog.",
-  "run_id": "RUN-20261013204554-27f4bb",
+  "run_id": "RUN-20261014002329-bc025128",
   "mode": "offline (deterministic rules and templates)",
   "route": {
     "workflow_id": "WF006",
@@ -52,7 +52,7 @@
       "attempts": 1,
       "status": "ok",
       "output": "loaded 13 catalog rows",
-      "ms": 2.0
+      "ms": 4.1
     },
     {
       "n": 2,
@@ -61,7 +61,7 @@
       "attempts": 1,
       "status": "ok",
       "output": "normalised SKU and name for 13 rows",
-      "ms": 0.2
+      "ms": 0.4
     },
     {
       "n": 3,
@@ -70,7 +70,7 @@
       "attempts": 1,
       "status": "ok",
       "output": "2 exact SKU match group(s)",
-      "ms": 0.1
+      "ms": 0.3
     },
     {
       "n": 4,
@@ -79,7 +79,7 @@
       "attempts": 1,
       "status": "ok",
       "output": "6 similar pair(s) by name + attributes",
-      "ms": 5.1
+      "ms": 5.4
     },
     {
       "n": 5,
@@ -88,7 +88,7 @@
       "attempts": 1,
       "status": "ok",
       "output": "4 duplicate group(s)",
-      "ms": 0.1
+      "ms": 0.4
     },
     {
       "n": 6,
@@ -97,10 +97,11 @@
       "attempts": 1,
       "status": "ok",
       "output": "4 record(s)",
-      "ms": 0.1
+      "ms": 0.3
     }
   ],
   "status": "completed",
+  "awaiting_reply": false,
   "message": null,
   "answer": "4 duplicate group(s) in 13 catalog rows: 2 definite (same SKU) and 2 possible (different SKU, similar name and attributes).",
   "result": {
@@ -150,5 +151,13 @@
       }
     ]
   },
-  "notes": []
+  "notes": [],
+  "usage": {
+    "llm_calls": 0,
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cost_usd": 0.0,
+    "model": ""
+  },
+  "duration_ms": 36.8
 }

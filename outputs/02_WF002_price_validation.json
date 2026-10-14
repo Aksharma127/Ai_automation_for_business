@@ -1,6 +1,6 @@
 {
   "request": "Find products where vendor price differs by more than 10%.",
-  "run_id": "RUN-20261013204554-1dd36c",
+  "run_id": "RUN-20261014002329-0c2e3dae",
   "mode": "offline (deterministic rules and templates)",
   "route": {
     "workflow_id": "WF002",
@@ -56,7 +56,7 @@
       "attempts": 1,
       "status": "ok",
       "output": "loaded 13 internal and 10 vendor prices",
-      "ms": 3.6
+      "ms": 4.2
     },
     {
       "n": 2,
@@ -65,7 +65,7 @@
       "attempts": 1,
       "status": "ok",
       "output": "9 matched by SKU, 4 without vendor price, 1 unknown vendor SKUs",
-      "ms": 0.1
+      "ms": 0.4
     },
     {
       "n": 3,
@@ -74,7 +74,7 @@
       "attempts": 1,
       "status": "ok",
       "output": "9 record(s)",
-      "ms": 0.2
+      "ms": 0.4
     },
     {
       "n": 4,
@@ -83,7 +83,7 @@
       "attempts": 1,
       "status": "ok",
       "output": "9 record(s)",
-      "ms": 0.3
+      "ms": 0.5
     },
     {
       "n": 5,
@@ -92,10 +92,11 @@
       "attempts": 1,
       "status": "ok",
       "output": "4 exception(s) flagged",
-      "ms": 0.2
+      "ms": 0.4
     }
   ],
   "status": "completed",
+  "awaiting_reply": false,
   "message": null,
   "answer": "9 products matched by SKU; 4 differ from the vendor price by more than 10%.",
   "result": {
@@ -386,5 +387,13 @@
       }
     ]
   },
-  "notes": []
+  "notes": [],
+  "usage": {
+    "llm_calls": 0,
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cost_usd": 0.0,
+    "model": ""
+  },
+  "duration_ms": 27.3
 }

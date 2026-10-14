@@ -5,6 +5,8 @@
     python -m workflow_agent --validate
     python -m workflow_agent --run-examples          # runs examples/requests.yaml, writes outputs/
     python -m workflow_agent -i                      # interactive chat loop
+    python -m workflow_agent --eval [--llm]          # score routing + extraction (evals/)
+    python -m workflow_agent --serve                 # HTTP API
 """
 from __future__ import annotations
 
@@ -16,14 +18,15 @@ from pathlib import Path
 
 import yaml
 
-from .engine import WorkflowAgent
+from .engine import RunNotFound, WorkflowAgent
+from .observability import configure_logging
 from .render import render_run
-from .settings import ROOT
+from .settings import ROOT, get_settings
 
 
 def _json(state: dict) -> str:
     keep = ["request", "run_id", "mode", "route", "workflow_id", "workflow_name", "inputs", "trace", "status",
-            "message", "answer", "result", "notes"]
+            "awaiting_reply", "message", "answer", "result", "notes", "usage", "duration_ms"]
     return json.dumps({k: state.get(k) for k in keep}, indent=2, default=str, ensure_ascii=False)
 
 
@@ -64,7 +67,7 @@ def write_docs(agent: WorkflowAgent, path: Path) -> None:
         out += [f"## {w.id} · {w.name}", "",
                 f"- **Trigger:** {w.trigger}",
                 f"- **Input (Excel):** {w.inputs_text}",
-                f"- **Inputs extracted from the request:** "
+                "- **Inputs extracted from the request:** "
                 + (", ".join(f"`{k}`" + (f" (default `{v.get('default')}`)" if v.get("default") is not None else "")
                              for k, v in w.inputs.items()) or "-"),
                 f"- **Tools/APIs (Excel):** {', '.join(w.tools_required)}",
@@ -90,6 +93,14 @@ def write_docs(agent: WorkflowAgent, path: Path) -> None:
 
 
 def main(argv: list[str] | None = None) -> int:
+    try:
+        return _main(argv)
+    except (ValueError, RunNotFound) as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 2
+
+
+def _main(argv: list[str] | None = None) -> int:
     p = argparse.ArgumentParser(prog="workflow_agent", description="Excel-driven AI workflow agent")
     p.add_argument("request", nargs="*", help="natural-language request")
     p.add_argument("--list", action="store_true", help="list workflows loaded from the Excel file")
@@ -98,12 +109,29 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--out", default=str(ROOT / "outputs"), help="output folder for --run-examples")
     p.add_argument("--json", action="store_true", help="print the full run state as JSON")
     p.add_argument("--offline", action="store_true", help="ignore any configured LLM")
-    p.add_argument("-i", "--interactive", action="store_true")
+    p.add_argument("-i", "--interactive", action="store_true", help="chat loop; answers paused runs in place")
+    p.add_argument("--reply", metavar="RUN_ID", help="answer a paused run: --reply RUN-... \"ORD-1001\"")
+    p.add_argument("--file", help="attach a data file (CSV/XLSX/JSON) to the request")
+    p.add_argument("--serve", action="store_true", help="start the HTTP API (uvicorn)")
+    p.add_argument("--host", default="127.0.0.1")
+    p.add_argument("-v", "--verbose", action="store_true", help="show structured logs")
+    p.add_argument("--port", type=int, default=8000)
+    p.add_argument("--eval", nargs="?", const=str(ROOT / "evals" / "routing_extraction.yaml"), metavar="YAML",
+                   help="score routing and input extraction; exit 1 below the thresholds")
+    p.add_argument("--llm", action="store_true", help="fail unless an LLM is configured (for --eval in CI)")
     p.add_argument("--docs", nargs="?", const=str(ROOT / "docs" / "workflow_analysis.md"), metavar="MD",
                    help="generate the workflow analysis document")
     a = p.parse_args(argv)
 
+    if a.serve:
+        import uvicorn
+
+        uvicorn.run("workflow_agent.api:create_app", factory=True, host=a.host, port=a.port)
+        return 0
+    configure_logging(get_settings().log_level if a.verbose else "WARNING", get_settings().log_json)
     agent = WorkflowAgent(llm=None) if a.offline else WorkflowAgent()
+    if a.llm and agent.llm is None:
+        raise ValueError("--llm given but no LLM is configured (set LLM_PROVIDER and its API key)")
     if a.list or a.validate:
         for w in agent.registry.workflows.values():
             mark = "✓" if w.executable else "✗"
@@ -118,10 +146,17 @@ def main(argv: list[str] | None = None) -> int:
     if a.docs:
         write_docs(agent, Path(a.docs))
         return 0
+    if a.eval:
+        from .evals import format_report, run_eval
+
+        report = run_eval(agent, Path(a.eval))
+        print(json.dumps({k: v for k, v in report.items() if k != "rows"}, indent=2) if a.json else format_report(report))
+        return 0 if report["passed"] else 1
     if a.run_examples:
         return run_examples(agent, Path(a.run_examples), Path(a.out))
     if a.interactive:
         print("Type a request (empty line to quit).")
+        pending: str | None = None
         while True:
             try:
                 req = input("\n> ").strip()
@@ -129,12 +164,18 @@ def main(argv: list[str] | None = None) -> int:
                 break
             if not req:
                 break
-            print(render_run(agent.run(req)))
+            state = agent.resume(pending, req) if pending else agent.run(req)
+            pending = state["run_id"] if state.get("awaiting_reply") else None
+            print(render_run(state))
+        return 0
+    if a.reply:
+        state = agent.resume(a.reply, " ".join(a.request))
+        print(_json(state) if a.json else render_run(state))
         return 0
     if not a.request:
         p.print_help()
         return 2
-    state = agent.run(" ".join(a.request))
+    state = agent.run(" ".join(a.request), attachments=[str(Path(a.file).resolve())] if a.file else None)
     print(_json(state) if a.json else render_run(state))
     return 0
 

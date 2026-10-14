@@ -1,6 +1,6 @@
 {
   "request": "Where is order ORD-1001?",
-  "run_id": "RUN-20261013204554-686d02",
+  "run_id": "RUN-20261014002329-bed1b1e6",
   "mode": "offline (deterministic rules and templates)",
   "route": {
     "workflow_id": "WF005",
@@ -37,8 +37,6 @@
   "inputs": {
     "order_id": "ORD-1001",
     "email": null,
-    "orders_db": "data/sample/orders.json",
-    "shipments_api": "data/sample/shipments.json",
     "request": "Where is order ORD-1001?"
   },
   "trace": [
@@ -49,16 +47,16 @@
       "attempts": 1,
       "status": "ok",
       "output": "order_id = ORD-1001",
-      "ms": 0.2
+      "ms": 0.6
     },
     {
       "n": 2,
       "step": "search order data",
-      "tool": "find_records",
+      "tool": "lookup_orders",
       "attempts": 1,
       "status": "ok",
       "output": "found 1 order(s)",
-      "ms": 0.2
+      "ms": 0.6
     },
     {
       "n": 3,
@@ -67,7 +65,7 @@
       "attempts": 1,
       "status": "ok",
       "output": "1 record(s)",
-      "ms": 0.0
+      "ms": 0.3
     },
     {
       "n": 4,
@@ -79,7 +77,7 @@
       ],
       "status": "ok",
       "output": "tracking fetched for 1 order(s)",
-      "ms": 50.6
+      "ms": 51.1
     },
     {
       "n": 5,
@@ -88,10 +86,11 @@
       "attempts": 1,
       "status": "ok",
       "output": "1 record(s)",
-      "ms": 0.1
+      "ms": 0.3
     }
   ],
   "status": "completed",
+  "awaiting_reply": false,
   "message": null,
   "answer": "Found 1 order(s) for ORD-1001.",
   "result": {
@@ -123,5 +122,13 @@
       }
     ]
   },
-  "notes": []
+  "notes": [],
+  "usage": {
+    "llm_calls": 0,
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cost_usd": 0.0,
+    "model": ""
+  },
+  "duration_ms": 67.2
 }

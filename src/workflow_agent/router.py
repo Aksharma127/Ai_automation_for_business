@@ -22,9 +22,7 @@ from pydantic import BaseModel, Field
 from . import llm as llm_api
 from .registry import WorkflowSpec
 
-STOP = set("""a an the and or of to for in on at by with this that these those is are be it its my our your
-me we i you can could would should please which what where who how do does show give find list all any
-from into as about today now new get""".split())
+STOP = set(["a", "an", "the", "and", "or", "of", "to", "for", "in", "on", "at", "by", "with", "this", "that", "these", "those", "is", "are", "be", "it", "its", "my", "our", "your", "me", "we", "i", "you", "can", "could", "would", "should", "please", "which", "what", "where", "who", "how", "do", "does", "show", "give", "find", "list", "all", "any", "from", "into", "as", "about", "today", "now", "new", "get"])
 
 
 def tokenize(text: str) -> list[str]:
@@ -122,12 +120,12 @@ class LLMRouter:
         system = ("You are the routing step of a business automation agent. Read the user's request and call "
                   "select_workflow with the single workflow that should handle it. Use NONE if nothing fits.")
         user = (f"Workflows:\n{catalog}\n\nKeyword-match hints (may be wrong): "
-                f"{[(h['workflow_id'], h['score']) for h in hints]}\n\nUser request: {request}")
+                f"{[(h['workflow_id'], h['score']) for h in hints]}\n\nUser request:\n{llm_api.data(request, 'request')}")
         try:
             # SelectWorkflow is bound as a schema the model must fill (tool calling, or native
             # structured output on providers that don't allow forcing a tool)
             choice: SelectWorkflow = llm_api.structured(self.llm, SelectWorkflow).invoke(
-                [("system", system), ("human", user)])
+                [("system", f"{system}\n{llm_api.UNTRUSTED_RULE}"), ("human", user)])
         except Exception as exc:
             d = self.fallback.route(request, min_confidence)
             d.reasoning = f"LLM routing failed ({type(exc).__name__}); keyword fallback: {d.reasoning}"

@@ -1,6 +1,6 @@
 {
   "request": "Generate SEO content for this product.",
-  "run_id": "RUN-20261013204554-18a87f",
+  "run_id": "RUN-20261014002329-5bce0917",
   "mode": "offline (deterministic rules and templates)",
   "route": {
     "workflow_id": "WF004",
@@ -57,7 +57,7 @@
       "attempts": 1,
       "status": "ok",
       "output": "product_name, category, attributes, color, target_audience attributes present, material missing",
-      "ms": 0.3
+      "ms": 1.1
     },
     {
       "n": 2,
@@ -66,7 +66,7 @@
       "attempts": 1,
       "status": "ok",
       "output": "Meet the Quilted Puffer Jacket, part of our Outerwear range, designed for urban commute...",
-      "ms": 0.1
+      "ms": 0.4
     },
     {
       "n": 3,
@@ -75,7 +75,7 @@
       "attempts": 1,
       "status": "ok",
       "output": "Quilted Puffer Jacket in olive with water-resistant shell, zip-off hood and two zip poc...",
-      "ms": 0.1
+      "ms": 0.5
     },
     {
       "n": 4,
@@ -84,7 +84,7 @@
       "attempts": 1,
       "status": "ok",
       "output": "Quilted Puffer Jacket – Olive | Outerwear",
-      "ms": 0.1
+      "ms": 0.3
     },
     {
       "n": 5,
@@ -93,10 +93,11 @@
       "attempts": 1,
       "status": "ok",
       "output": "Shop the Quilted Puffer Jacket in olive for urban commuters: water-resistant shell, zip...",
-      "ms": 0.1
+      "ms": 0.5
     }
   ],
   "status": "completed",
+  "awaiting_reply": false,
   "message": null,
   "answer": "Generated a description, short description, SEO title and meta description from the supplied attributes only. Missing information (not invented, please supply before publishing): material.",
   "result": {
@@ -136,5 +137,13 @@
       }
     ]
   },
-  "notes": []
+  "notes": [],
+  "usage": {
+    "llm_calls": 0,
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cost_usd": 0.0,
+    "model": ""
+  },
+  "duration_ms": 30.2
 }

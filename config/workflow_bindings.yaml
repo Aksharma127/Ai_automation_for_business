@@ -26,6 +26,7 @@ WF001:  # Inventory Restock Check
       type: string
       description: Path to the inventory CSV, if the user names one
       default: data/sample/inventory.csv
+      upload: true
       pattern: '([\w./-]*inventory[\w./-]*\.(?:csv|xlsx))'
     threshold_override:
       type: number
@@ -81,7 +82,7 @@ WF002:  # Product Price Validation
   keywords: [price, prices, pricing, vendor price, price difference, validate prices, price list, differs]
   inputs:
     product_file: {type: string, default: data/sample/products.csv, extract: false, description: Internal product price CSV}
-    vendor_file: {type: string, default: data/sample/vendor_prices.csv, extract: false, description: Vendor price list CSV}
+    vendor_file: {type: string, default: data/sample/vendor_prices.csv, extract: false, upload: true, description: Vendor price list CSV}
     tolerance_pct:
       type: number
       description: Allowed price difference in percent (default 10)
@@ -141,6 +142,7 @@ WF003:  # Vendor File Processing
       type: string
       description: Path to the vendor CSV/XLSX file to process
       default: data/sample/vendor_upload.xlsx
+      upload: true
       pattern: '([\w./-]+\.(?:csv|xlsx|xls))'
   steps:
     - tool: load_table
@@ -306,16 +308,13 @@ WF005:  # Customer Order Status
       type: string
       description: Customer email address
       pattern: '([\w.+-]+@[\w-]+\.[\w.-]+)'
-    orders_db: {type: string, default: data/sample/orders.json, extract: false, description: Simulated order database}
-    shipments_api: {type: string, default: data/sample/shipments.json, extract: false, description: Simulated carrier API data}
   steps:
     - tool: validate_identifier
       args: {order_id: $inputs.order_id, email: $inputs.email}
       save_as: identifier
       describe: '{field} = {value}'
-    - tool: find_records
+    - tool: lookup_orders
       args:
-        path: $inputs.orders_db
         field: $identifier.field
         value: $identifier.value
         if_none: "I couldn't find an order for {value}. Could you share another identifier, such as the order ID from your confirmation email or the email address used at checkout?"   # Excel decision logic
@@ -325,7 +324,7 @@ WF005:  # Customer Order Status
       args: {records: $orders, fields: [order_id, order_date, status, items, carrier, tracking_number]}
       save_as: order_status
     - tool: shipment_lookup
-      args: {orders: $order_status, db_path: $inputs.shipments_api}
+      args: {orders: $order_status}
       retries: 2
       on_error: degrade
       fallback_tool: shipment_lookup_degraded
@@ -350,6 +349,7 @@ WF006:  # Duplicate Product Detection
       type: string
       description: Product catalog CSV
       default: data/sample/catalog.csv
+      upload: true
       pattern: '([\w./-]*catalog[\w./-]*\.(?:csv|xlsx))'
     min_similarity: {type: number, default: 0.75, extract: false, description: Minimum combined similarity for a possible duplicate}
   steps:
@@ -546,6 +546,7 @@ WF008:  # SEO Keyword Classification
       type: string
       description: Keyword CSV path
       default: data/sample/keywords.csv
+      upload: true
       pattern: '([\w./-]*keyword[\w./-]*\.csv)'
   steps:
     - tool: load_table
@@ -614,7 +615,7 @@ WF008:  # SEO Keyword Classification
         columns: [rank, keyword, monthly_searches, intent, category, priority, target_page]
 
 WF009:  # Employee Task Assignment
-  keywords: [assign, assignment, task, ticket, bug, best developer, delegate, who should, available developer, workload]
+  keywords: [assign, assignment, task, ticket, bug, best developer, delegate, who should, available developer, workload, pick up, capacity, priority, analyst, team member]
   inputs:
     description:
       type: string
@@ -714,9 +715,11 @@ WF010:  # Workflow Performance Report
   inputs:
     log_file:
       type: string
-      description: Execution log CSV (use runs/execution_log.csv to analyse this agent's own runs)
+      description: Execution log CSV, or runstore://steps to analyse this agent's own run history
       default: data/sample/execution_logs.csv
-      pattern: '([\w./-]*log[\w./-]*\.csv)'
+      upload: true
+      pattern: ['(runstore://steps)', '\b(own runs|own run history|own history|this agent)\b', '([\w./-]*log[\w./-]*\.csv)']
+      aliases: {'runstore://steps': [own runs, own run history, own history, this agent]}
     max_failure_rate: {type: number, default: 0.10, extract: false, description: Failure-rate threshold}
     max_avg_duration_sec: {type: number, default: 30, extract: false, description: Average duration threshold in seconds}
   steps:

@@ -6,11 +6,11 @@
 **Inputs:** product_file=data/sample/products.csv; vendor_file=data/sample/vendor_prices.csv; tolerance_pct=5
 
 **Steps Executed:**
-1. ✓ Load product prices — `load_tables` → loaded 13 internal and 10 vendor prices (2.6 ms)
-2. ✓ match products by SKU — `join_tables` → 9 matched by SKU, 4 without vendor price, 1 unknown vendor SKUs (0.1 ms)
-3. ✓ compare internal and vendor prices — `add_columns` → 9 record(s) (0.2 ms)
-4. ✓ calculate percentage difference — `add_columns` → 9 record(s) (0.3 ms)
-5. ✓ flag exceptions — `filter_rows` → 4 exception(s) flagged (0.2 ms)
+1. ✓ Load product prices — `load_tables` → loaded 13 internal and 10 vendor prices (5.9 ms)
+2. ✓ match products by SKU — `join_tables` → 9 matched by SKU, 4 without vendor price, 1 unknown vendor SKUs (0.5 ms)
+3. ✓ compare internal and vendor prices — `add_columns` → 9 record(s) (0.6 ms)
+4. ✓ calculate percentage difference — `add_columns` → 9 record(s) (0.5 ms)
+5. ✓ flag exceptions — `filter_rows` → 4 exception(s) flagged (0.6 ms)
 
 **Status:** Completed
 

@@ -1,6 +1,6 @@
 {
   "request": "Classify these keywords and map them to pages.",
-  "run_id": "RUN-20261013204554-ed276b",
+  "run_id": "RUN-20261014002329-b369f284",
   "mode": "offline (deterministic rules and templates)",
   "route": {
     "workflow_id": "WF008",
@@ -48,7 +48,7 @@
       "attempts": 1,
       "status": "ok",
       "output": "read 15 keywords",
-      "ms": 1.4
+      "ms": 2.2
     },
     {
       "n": 2,
@@ -57,7 +57,7 @@
       "attempts": 1,
       "status": "ok",
       "output": "14 unique, Buy Running Shoes Online duplicate(s) removed",
-      "ms": 0.1
+      "ms": 0.4
     },
     {
       "n": 3,
@@ -66,7 +66,7 @@
       "attempts": 1,
       "status": "ok",
       "output": "14 record(s)",
-      "ms": 1.6
+      "ms": 1.8
     },
     {
       "n": 4,
@@ -75,7 +75,7 @@
       "attempts": 1,
       "status": "ok",
       "output": "14 record(s)",
-      "ms": 0.3
+      "ms": 0.6
     },
     {
       "n": 5,
@@ -84,7 +84,7 @@
       "attempts": 1,
       "status": "ok",
       "output": "scored and ranked 14 keywords",
-      "ms": 0.7
+      "ms": 0.9
     },
     {
       "n": 6,
@@ -93,10 +93,11 @@
       "attempts": 1,
       "status": "ok",
       "output": "outputs/files/keyword_report.csv",
-      "ms": 0.4
+      "ms": 0.8
     }
   ],
   "status": "completed",
+  "awaiting_reply": false,
   "message": null,
   "answer": "14 unique keywords classified (1 duplicate(s) removed); 4 are high priority. Full report: outputs/files/keyword_report.csv.",
   "result": {
@@ -273,5 +274,13 @@
       }
     ]
   },
-  "notes": []
+  "notes": [],
+  "usage": {
+    "llm_calls": 0,
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cost_usd": 0.0,
+    "model": ""
+  },
+  "duration_ms": 30.4
 }

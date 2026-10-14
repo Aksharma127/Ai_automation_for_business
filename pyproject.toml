@@ -4,19 +4,23 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "workflow-agent"
-version = "1.0.0"
+version = "2.0.0"
 description = "Excel-driven, reusable AI agent that turns business workflows into executable LangGraph runs"
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 readme = "README.md"
 dependencies = [
-  "langgraph>=1.0", "langchain>=1.0", "langchain-core>=1.0", "pydantic>=2.7", "pandas>=2.2",
-  "openpyxl>=3.1", "pyyaml>=6.0", "python-dotenv>=1.0",
+  "langgraph>=1.0,<2", "langgraph-checkpoint-sqlite>=3.0,<4", "langchain>=1.0,<2", "langchain-core>=1.0,<2",
+  "pydantic>=2.7,<3", "pandas>=2.2,<4", "openpyxl>=3.1,<4", "pyyaml>=6.0,<7", "python-dotenv>=1.0,<2",
+  "httpx>=0.27,<1",
 ]
 
 [project.optional-dependencies]
-openai = ["langchain-openai>=1.0"]
-anthropic = ["langchain-anthropic>=1.0"]
-dev = ["pytest>=8.0"]
+openai = ["langchain-openai>=1.0,<2"]
+anthropic = ["langchain-anthropic>=1.0,<2"]
+api = ["fastapi>=0.115,<1", "uvicorn[standard]>=0.30,<1", "python-multipart>=0.0.9"]
+postgres = ["langgraph-checkpoint-postgres>=3.0,<4", "psycopg[binary]>=3.2,<4", "psycopg-pool>=3.2,<4"]
+otel = ["opentelemetry-api>=1.25", "opentelemetry-sdk>=1.25", "opentelemetry-exporter-otlp>=1.25"]
+dev = ["pytest>=8.0", "ruff>=0.6", "mypy>=1.11", "types-PyYAML", "pandas-stubs"]
 
 [project.scripts]
 workflow-agent = "workflow_agent.cli:main"
@@ -27,3 +31,31 @@ where = ["src"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["src"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "S", "SIM"]
+ignore = [
+  "E501",   # long lines are allowed where splitting hurts readability (tables, prompts)
+  "S101",   # assert in tests
+  "B008",   # FastAPI's Depends()/File() defaults
+  "SIM108",
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["S", "B"]
+"scripts/*" = ["S"]
+"src/workflow_agent/storage.py" = ["S608"]  # SQL is built only from constant column names; values are bound parameters
+
+[tool.mypy]
+python_version = "3.12"
+packages = ["workflow_agent"]
+mypy_path = "src"
+ignore_missing_imports = true
+check_untyped_defs = true
+warn_unused_ignores = true
+no_implicit_optional = true
